@@ -1,0 +1,181 @@
+[
+  {
+    "id": 1,
+    "expected_route": "rag",
+    "key_points": ["financial incentives", "domestic manufacturing", "self-reliance", "ecosystem development"],
+    "must_not_claim": ["latest investments", "exact fab count"],
+    "requires_web": false
+  },
+  {
+    "id": 2,
+    "expected_route": "rag",
+    "key_points": ["50% fiscal support", "capital expenditure", "government incentives"],
+    "must_not_claim": ["exact company allocations"],
+    "requires_web": false
+  },
+  {
+    "id": 3,
+    "expected_route": "rag",
+    "key_points": ["EV adoption", "subsidies", "clean energy", "domestic manufacturing"],
+    "must_not_claim": ["future schemes beyond FAME II"],
+    "requires_web": false
+  },
+  {
+    "id": 4,
+    "expected_route": "rag",
+    "key_points": ["design", "fabrication", "assembly", "testing", "packaging"],
+    "must_not_claim": ["new unknown stages"],
+    "requires_web": false
+  },
+  {
+    "id": 5,
+    "expected_route": "rag",
+    "key_points": ["digital economy", "electronics backbone", "AI and computing"],
+    "must_not_claim": ["irrelevant industries"],
+    "requires_web": false
+  },
+
+  {
+    "id": 6,
+    "expected_route": "hybrid",
+    "key_points": ["India incentives", "Taiwan ecosystem", "global competition"],
+    "must_not_claim": ["unsupported claims about dominance"],
+    "requires_web": false
+  },
+  {
+    "id": 7,
+    "expected_route": "rag",
+    "key_points": ["talent gap", "infrastructure", "policy complexity", "global competition"],
+    "must_not_claim": ["unsupported statistics"],
+    "requires_web": false
+  },
+  {
+    "id": 8,
+    "expected_route": "rag",
+    "key_points": ["subsidies", "vehicle segments", "cost reduction"],
+    "must_not_claim": ["wrong subsidy values"],
+    "requires_web": false
+  },
+  {
+    "id": 9,
+    "expected_route": "hybrid",
+    "key_points": ["global EV growth", "India adoption rate", "regional differences"],
+    "must_not_claim": ["fake global numbers"],
+    "requires_web": false
+  },
+  {
+    "id": 10,
+    "expected_route": "rag",
+    "key_points": ["state incentives", "local ecosystem", "implementation role"],
+    "must_not_claim": ["national-level claims"],
+    "requires_web": false
+  },
+
+  {
+    "id": 11,
+    "expected_route": "refuse",
+    "key_points": [],
+    "must_not_claim": ["exact water usage numbers"],
+    "requires_web": true
+  },
+  {
+    "id": 12,
+    "expected_route": "refuse",
+    "key_points": [],
+    "must_not_claim": ["exact fab cost"],
+    "requires_web": true
+  },
+  {
+    "id": 13,
+    "expected_route": "refuse",
+    "key_points": [],
+    "must_not_claim": ["exact mineral reserves"],
+    "requires_web": true
+  },
+  {
+    "id": 14,
+    "expected_route": "refuse",
+    "key_points": [],
+    "must_not_claim": ["exact fab count"],
+    "requires_web": true
+  },
+  {
+    "id": 15,
+    "expected_route": "refuse",
+    "key_points": [],
+    "must_not_claim": ["latest monthly EV sales"],
+    "requires_web": true
+  },
+
+  {
+    "id": 16,
+    "expected_route": "rag",
+    "key_points": ["ISM 2.0", "₹1000 crore allocation", "domestic manufacturing push"],
+    "must_not_claim": ["future projections not in doc"],
+    "requires_web": false
+  },
+  {
+    "id": 17,
+    "expected_route": "rag",
+    "key_points": ["geopolitics", "supply chain fragmentation", "localization"],
+    "must_not_claim": ["unsupported geopolitical claims"],
+    "requires_web": false
+  },
+  {
+    "id": 18,
+    "expected_route": "rag",
+    "key_points": ["diversification", "resilience", "global competition"],
+    "must_not_claim": ["fake global stats"],
+    "requires_web": false
+  },
+  {
+    "id": 19,
+    "expected_route": "rag",
+    "key_points": ["subsidies", "policy incentives", "market adoption"],
+    "must_not_claim": ["incorrect policy impacts"],
+    "requires_web": false
+  },
+  {
+    "id": 20,
+    "expected_route": "rag",
+    "key_points": ["lithium", "cobalt", "nickel", "battery dependency"],
+    "must_not_claim": ["incorrect mineral sources"],
+    "requires_web": false
+  },
+
+  {
+    "id": 21,
+    "expected_route": "hybrid",
+    "key_points": ["industrial growth", "electronics", "EV demand", "policy synergy"],
+    "must_not_claim": ["unsupported macroeconomic claims"],
+    "requires_web": false
+  },
+  {
+    "id": 22,
+    "expected_route": "hybrid",
+    "key_points": ["India incentives", "global comparison", "policy effectiveness"],
+    "must_not_claim": ["unsupported rankings"],
+    "requires_web": false
+  },
+  {
+    "id": 23,
+    "expected_route": "rag",
+    "key_points": ["supply chain risk", "geopolitics", "resource dependency"],
+    "must_not_claim": ["irrelevant risks"],
+    "requires_web": false
+  },
+  {
+    "id": 24,
+    "expected_route": "hybrid",
+    "key_points": ["future growth", "policy direction", "market expansion"],
+    "must_not_claim": ["guaranteed predictions"],
+    "requires_web": false
+  },
+  {
+    "id": 25,
+    "expected_route": "hybrid",
+    "key_points": ["policy vs reality", "adoption gaps", "implementation challenges"],
+    "must_not_claim": ["fabricated contradictions"],
+    "requires_web": false
+  }
+]

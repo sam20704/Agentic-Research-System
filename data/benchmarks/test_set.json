@@ -1,0 +1,31 @@
+[
+  {"id": 1, "question": "Summarize the key objectives of India's semiconductor fab policy.", "difficulty": "easy"},
+  {"id": 2, "question": "What financial incentives are provided for semiconductor fabs in India?", "difficulty": "easy"},
+  {"id": 3, "question": "What are the main goals of the FAME II scheme?", "difficulty": "easy"},
+  {"id": 4, "question": "What are the key components of the semiconductor value chain?", "difficulty": "easy"},
+  {"id": 5, "question": "What is the role of semiconductors in modern digital economies?", "difficulty": "easy"},
+
+  {"id": 6, "question": "Compare semiconductor policy approaches in India and Taiwan.", "difficulty": "medium"},
+  {"id": 7, "question": "What challenges does India face in semiconductor manufacturing?", "difficulty": "medium"},
+  {"id": 8, "question": "How does FAME II support EV adoption in India?", "difficulty": "medium"},
+  {"id": 9, "question": "Compare EV adoption trends in India with global trends.", "difficulty": "medium"},
+  {"id": 10, "question": "What role do state policies like Uttar Pradesh’s semiconductor policy play in the ecosystem?", "difficulty": "medium"},
+
+  {"id": 11, "question": "What is the exact water consumption required for semiconductor fabs in India?", "difficulty": "hard"},
+  {"id": 12, "question": "What is the exact cost of setting up a semiconductor fab in India according to policy documents?", "difficulty": "hard"},
+  {"id": 13, "question": "What are the exact battery mineral reserves available in India for EV production?", "difficulty": "hard"},
+  {"id": 14, "question": "What is the exact number of semiconductor fabs currently operational in India?", "difficulty": "hard"},
+  {"id": 15, "question": "What are the exact EV sales numbers in India for the current month?", "difficulty": "hard"},
+
+  {"id": 16, "question": "What are the latest developments under India Semiconductor Mission 2.0?", "difficulty": "hard"},
+  {"id": 17, "question": "How are global EV supply chains evolving due to geopolitical tensions?", "difficulty": "hard"},
+  {"id": 18, "question": "What are the global trends in semiconductor supply chain diversification?", "difficulty": "hard"},
+  {"id": 19, "question": "How do government incentives influence EV adoption globally?", "difficulty": "hard"},
+  {"id": 20, "question": "What role do critical minerals play in EV supply chains?", "difficulty": "hard"},
+
+  {"id": 21, "question": "Analyze how semiconductor policy and EV policy together impact industrial growth in India.", "difficulty": "very_hard"},
+  {"id": 22, "question": "Evaluate the effectiveness of India's semiconductor incentives compared to global policies.", "difficulty": "very_hard"},
+  {"id": 23, "question": "What are the major risks in global semiconductor and EV supply chains?", "difficulty": "very_hard"},
+  {"id": 24, "question": "Predict the future of India's semiconductor ecosystem based on current policies.", "difficulty": "very_hard"},
+  {"id": 25, "question": "Identify contradictions between policy goals and real-world EV or semiconductor adoption trends.", "difficulty": "very_hard"}
+]
