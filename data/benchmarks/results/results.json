@@ -1,0 +1,977 @@
+[
+  {
+    "id": 1,
+    "question": "Summarize the key objectives of India's semiconductor fab policy.",
+    "retrieved_contexts": [],
+    "raw_answer": "",
+    "parsed_answer": "",
+    "support": "",
+    "ground_truth": {
+      "key_points": [
+        "financial incentives",
+        "domestic manufacturing",
+        "self-reliance",
+        "ecosystem development"
+      ],
+      "must_not_claim": [
+        "latest investments",
+        "exact fab count"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 0,
+      "completeness": 0,
+      "routing": 0,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 0,
+      "constraint_compliance": 0
+    },
+    "total": 0,
+    "normalized_score": 0.0,
+    "failure_tags": [
+      "runtime_error"
+    ],
+    "error": "llama runner process has terminated: %!w(<nil>) (status code: 500)"
+  },
+  {
+    "id": 2,
+    "question": "What financial incentives are provided for semiconductor fabs in India?",
+    "retrieved_contexts": [
+      "., hereby, acknowledge that the incentives that would / may be provided to us under the Modified Scheme for setting up of Semiconductor Fabs facilities in India, notified by Ministry of Electronics and Information Technology vide Notification No. CG-DL-E-04102022-239339 dated 04.10.2022, will be provided to us based on, and after relying upon, the information provided by us to avail the said incentives",
+      "Modified Scheme for setting up of Semiconductor Fabs in India seeking incentive for the project pertaining to manufacturing or expansion of …………",
+      ".116 SEMICONDUCTOR AND ELECTRONICS MANUFACTURING POLICY ENVIRONMENT The Indian government has extended some of the world’s most generous incentives to attract semiconductor ATP and fabrication activity",
+      ".119 India’s semiconductor investment package, offering a 50 percent match by the central government and 20 to 25 percent by the relevant state government, is currently the world’s most generous. Separately from its specifically semiconductor-focused incentive packages, a key component of India’s strategy to accelerate its path to becoming a global hub for electronics manufacturing is its $20 billion Production Linked Incentive (PLI) scheme",
+      ". 4.2.2 4.2.3 4.2.4 4.2.5 4.3 ELIGIBLE INVESTMENT Semiconductor Fabs: Fiscal support as percentage of project cost shall be limited to the activities defined under section 2.12 of the Guidelines issued for Modified Scheme for setting up of Semiconductor Fabs in India by the MeitY, Government of India dated 29th May 2023, as amended from time to time.(Glossary 8 (ii)) 4.3.1 Display Fabs: Fiscal support as percentage of project cost shall be limited to the activities defined under section 2"
+    ],
+    "raw_answer": "Answer:\nThe financial incentives provided for semiconductor fabs in India include a 50 percent match by the central government and 20 to 25 percent by the relevant state government, as per Context [4]. The fiscal support is limited to the activities defined under section 2.12 of the Guidelines issued for Modified Scheme for setting up of Semiconductor Fabs in India.\n\nSupport:\n[Context 4], [Context 5]",
+    "parsed_answer": "The financial incentives provided for semiconductor fabs in India include a 50 percent match by the central government and 20 to 25 percent by the relevant state government, as per Context [4]. The fiscal support is limited to the activities defined under section 2.12 of the Guidelines issued for Modified Scheme for setting up of Semiconductor Fabs in India.",
+    "support": "[Context 4], [Context 5]",
+    "ground_truth": {
+      "key_points": [
+        "50% fiscal support",
+        "capital expenditure",
+        "government incentives"
+      ],
+      "must_not_claim": [
+        "exact company allocations"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 3,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 19,
+    "normalized_score": 76.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 3,
+    "question": "What are the main goals of the FAME II scheme?",
+    "retrieved_contexts": [
+      ". FAME II was launched in April 2019 with initial earmarked funding of ₹10,000 crore (Ministry of Heavy Industries, 2019a). While the policy was initially approved to be implemented for a period of three years, in June 2021, its duration was extended to March 2024 with no change to its targets or fund allocation (Ministry of Heavy Industries, 2021)",
+      ". The Faster Adoption and Manufacturing of Electric Vehicles (FAME) program is the Indian government’s flagship EV promotion policy, and it seeks to spur demand for EVs through the provision of fiscal incentives to EV buyers. The second phase of the scheme, FAME II, was launched in April 2019 and concluded in March 2024 (Ministry of Heavy Industries, 2019c)",
+      ". Demand incentives account for the majority of funds allocated under FAME II and are the most significant policy lever under the scheme to accelerate the uptake of EVs. Media reports suggest that the government is considering implementing a third phase of the scheme, though there has been no official announcement from the government (Mukherjee, 2024)",
+      ". India has been actively promoting the uptake of EVs, including through the flagship Faster Adoption and Manufacturing of Electric Vehicles (FAME) scheme, which aims to do this primarily through the provision of fiscal incentives to EV buyers. The scheme’s second phase, FAME II, was launched in April 2019 with an initial budget outlay of ₹10,000 crore; that was later increased to ₹11,500 crore and the scheme concluded in March 2024",
+      ".e., electric buses and charging infrastructure) at 35%. The remaining funds were allocated for other miscellaneous expenditures. The ₹11,500 crore earmarked under FAME II is approximately 22 times the level of spending under FAME I"
+    ],
+    "raw_answer": "Answer: To spur demand for EVs through fiscal incentives to EV buyers.\n\nSupport:\n[Context 1], [Context 2]",
+    "parsed_answer": "To spur demand for EVs through fiscal incentives to EV buyers.",
+    "support": "[Context 1], [Context 2]",
+    "ground_truth": {
+      "key_points": [
+        "EV adoption",
+        "subsidies",
+        "clean energy",
+        "domestic manufacturing"
+      ],
+      "must_not_claim": [
+        "future schemes beyond FAME II"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 1,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 17,
+    "normalized_score": 68.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 4,
+    "question": "What are the key components of the semiconductor value chain?",
+    "retrieved_contexts": [
+      "(WITS) $0 $20 $40 $60 $80 $100 $120 $140 $160 2013 2021 $0 $50 $100 $150 $200 $250 $300 $350 $400 $450 $500 2017 2022 INFORMATION TECHNOLOGY & INNOVATION FOUNDATION | FEBRUARY 2024 PAGE 13 THE SEMICONDUCTOR VALUE CHAIN Semiconductors—the world’s fourth-most-traded product—have perhaps the most complex and geographically dispersed value chain of any industry in the world",
+      ".” Ibid. Khan, Mann, and Peterson, “The Semiconductor Supply Chain,” Saif M",
+      ". A subsequent section of this report examines the broader semiconductor ecosystem support actors in India (such as research institutes and materials and components suppliers), while this section focuses on the key phases of R&D/design, manufacturing (fabs and ATP), and semiconductor manufacturing equipment. As figure 8 shows, India already has a number of important players operating in each of these phases of the semiconductor value chain",
+      ".)73 Figure 7: Value added by segments of the semiconductor production process, 2019 ($445 billion, total)74 Source: Center for Security and Emerging Technology INFORMATION TECHNOLOGY & INNOVATION FOUNDATION | FEBRUARY 2024 PAGE 15 INDIA’S SEMICONDUCTOR STATE OF PLAY AND MARKET OPPORTUNITIES India is currently strongest in the R&D and design facets of the semiconductor value chain but desires to build expanded manufacturing capability, starting with the ATP market and seeking to move into the",
+      "“Semiconductor Manufacturing Value Chain: India’s Opportunity in the Global Market” (IESA, April 2022)"
+    ],
+    "raw_answer": "Answer:\nThe key phases of the semiconductor value chain mentioned are R&D/design, manufacturing (fabs and ATP), and semiconductor manufacturing equipment.\n\nSupport:\n[Context 3], [Context 4]",
+    "parsed_answer": "The key phases of the semiconductor value chain mentioned are R&D/design, manufacturing (fabs and ATP), and semiconductor manufacturing equipment.",
+    "support": "[Context 3], [Context 4]",
+    "ground_truth": {
+      "key_points": [
+        "design",
+        "fabrication",
+        "assembly",
+        "testing",
+        "packaging"
+      ],
+      "must_not_claim": [
+        "new unknown stages"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 2,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.2,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 18,
+    "normalized_score": 72.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 5,
+    "question": "What is the role of semiconductors in modern digital economies?",
+    "retrieved_contexts": [
+      ". Semiconductors represent the heartbeat of the modern global digital economy, an industry that’s expected to grow to become a $588 billion industry in 2024 and which stimulates another $7 trillion in global economic activity annually and underpins a range of downstream applications such as AI and big data",
+      ". Put simply, semiconductors are foundational to the ability of enterprises and nations alike to compete in the global economy; they truly represent the “commanding heights” of the modern global digital economy. It should also be observed that semiconductors—and the capacity to continue to innovate and deploy them—will be indispensable to helping society achieve global climate and sustainability goals",
+      ". It also spurs innovation in AI, IoT, and quantum computing. Economically, it fuels job creation and growth via a complex supply chain, while investments ensure technological sovereignty and global competitiveness. In this digital era, semiconductors drive innovation,connectivity, and prosperity. The India Semiconductor Mission aims to establish the nation as a global semiconductor player",
+      ". Semiconductors are foundational to the ability of enterprises and nations alike to compete in the global economy; they truly represent the commanding heights of the modern global digital economy. First, there’s certainly a prestige factor at play. India is to be celebrated and commended for its recent lunar vehicle landing, making it one of only four nations to achieve that incredibly impressive feat",
+      ". Together, these initiatives position microprocessors not merely as components, but as strategic enablers of India’s digital sovereignty—supporting innovation, securing critical infrastructure, and anchoring the country’s long-term ambitions in the global semiconductor value chain. Development of Semiconductor Talent Pipeline A strong semiconductor ecosystem depends as much on people as on infrastructure"
+    ],
+    "raw_answer": "Answer: Semiconductors represent the heartbeat of the modern global digital economy.\n\nSupport: [Context 1]",
+    "parsed_answer": "Semiconductors represent the heartbeat of the modern global digital economy.",
+    "support": "[Context 1]",
+    "ground_truth": {
+      "key_points": [
+        "digital economy",
+        "electronics backbone",
+        "AI and computing"
+      ],
+      "must_not_claim": [
+        "irrelevant industries"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 1,
+      "completeness": 2,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.333,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 18,
+    "normalized_score": 72.0,
+    "failure_tags": [
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 6,
+    "question": "Compare semiconductor policy approaches in India and Taiwan.",
+    "retrieved_contexts": [
+      ".S. states in that regard. The report closes with policy recommendations. WHY INDIA SHOULD SEEK TO DEEPEN ITS PRESENCE IN GLOBAL SEMICONDUCTOR VALUE CHAINS India faces a unique moment and opportunity in time",
+      ".116 SEMICONDUCTOR AND ELECTRONICS MANUFACTURING POLICY ENVIRONMENT The Indian government has extended some of the world’s most generous incentives to attract semiconductor ATP and fabrication activity",
+      "organization responsible for overseeing the implementation of the semiconductor policy in Uttar Pradesh",
+      ". The report then pivots to examine the state of India’s regulatory and business environment, considering topics from talent and infrastructure to taxes and tariffs, before exploring the key supporting actors in India’s semiconductor ecosystem. It then examines the strategies several Indian states have fielded in an attempt to attract semiconductor activity and provides lessons from several U.S. states in that regard. The report closes with policy recommendations",
+      ". This shift reflects India’s move towards deeper technological capability and reduced dependence on external systems, strengthening its position in the global semiconductor value chain. Anticipated Impact of Semiconductor Programme in 2026–27 India’s semiconductor programme has been recalibrated in response to intensifying global competition and the concentration of advanced chip technologies among a limited number of players"
+    ],
+    "raw_answer": "I don't have enough information to answer this.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [
+        "India incentives",
+        "Taiwan ecosystem",
+        "global competition"
+      ],
+      "must_not_claim": [
+        "unsupported claims about dominance"
+      ],
+      "expected_route": "hybrid",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 0,
+      "routing": 0,
+      "retrieval_recall_proxy": 0.333,
+      "citation": 0,
+      "constraint_compliance": 5
+    },
+    "total": 10,
+    "normalized_score": 40.0,
+    "failure_tags": [
+      "wrong_refusal",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 7,
+    "question": "What challenges does India face in semiconductor manufacturing?",
+    "retrieved_contexts": [
+      ". Providing incentives for the entirety of the semiconductor ecosystem, including silicon wafer manufacturing and equipment manufacturing, will further increase India’s attractiveness to the semiconductor industry. INDIA-U.S",
+      ". Khan, Alexander Mann, and Dhalia Peterson, “The Semiconductor Supply Chain: Assessing National Competitiveness” (Center for Security and Emerging Technology (CSET), January 2021), 8,  Nidhi Singal, “Is India a ‘semiconductor design’ nation? All you need to know,” Business Today, September 6, 2022,  nation-all-you-need-to-know-346508-2022-09-India Electronic and Semiconductors Association (IESA), “Semiconductor Manufacturing Value Chain: India’s Opportunity in the Global Market” (IESA, April",
+      ". 146, Harvard University, April 2007),  and-evolution-comparative-advantage. Kathuria, Kedia, and Balakrishnan, “Mapping the future of high value manufacturing in India,” India Electronics & Semiconductor Association (IESA) and Counterpoint Research, “India Semiconductor Market Report” (IESA and Counterpoint Research, March 2022); Counterpoint Research, “India’s Promising Semiconductor Manufacturing Trajectory,” news release, May 9, 2023,  trajectory/",
+      ". As noted, India already contributes significantly to global semiconductor value chains—as evidenced by its strengths in semiconductor R&D and design—and Micron’s investment in an ATP facility is an important test case to validate India’s readiness to take an even-more-significant leap into semiconductor manufacturing. Many of the actors, assets, resources, and capabilities that India needs are present, although India’s semiconductor engineering skills base will need to be deepened",
+      ". A subsequent section of this report examines the broader semiconductor ecosystem support actors in India (such as research institutes and materials and components suppliers), while this section focuses on the key phases of R&D/design, manufacturing (fabs and ATP), and semiconductor manufacturing equipment. As figure 8 shows, India already has a number of important players operating in each of these phases of the semiconductor value chain"
+    ],
+    "raw_answer": "I don't have enough information to answer this.\n\nSupport: None of the context blocks explicitly mention challenges faced by India in semiconductor manufacturing. The contexts only provide general information about India's attractiveness, strengths, and opportunities in the semiconductor industry, as well as its readiness to take a leap into semiconductor manufacturing.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [
+        "talent gap",
+        "infrastructure",
+        "policy complexity",
+        "global competition"
+      ],
+      "must_not_claim": [
+        "unsupported statistics"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 0,
+      "routing": 0,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 0,
+      "constraint_compliance": 5
+    },
+    "total": 10,
+    "normalized_score": 40.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "wrong_refusal",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 8,
+    "question": "How does FAME II support EV adoption in India?",
+    "retrieved_contexts": [
+      ". The Faster Adoption and Manufacturing of Electric Vehicles (FAME) program is the Indian government’s flagship EV promotion policy, and it seeks to spur demand for EVs through the provision of fiscal incentives to EV buyers. The second phase of the scheme, FAME II, was launched in April 2019 and concluded in March 2024 (Ministry of Heavy Industries, 2019c)",
+      ". India has been actively promoting the uptake of EVs, including through the flagship Faster Adoption and Manufacturing of Electric Vehicles (FAME) scheme, which aims to do this primarily through the provision of fiscal incentives to EV buyers. The scheme’s second phase, FAME II, was launched in April 2019 with an initial budget outlay of ₹10,000 crore; that was later increased to ₹11,500 crore and the scheme concluded in March 2024",
+      ". This study first provides background on FAME II, describing its components and purchase subsidies offered to each vehicle segment. The study then offers insights into the scheme in terms of fund utilization, EV sales target achievement, and the status of EV uptake in India. Further, the report assesses the impact of purchase subsidies offered under FAME II on the cost dynamics of EVs and explores the opportunity of extending incentives to segments not covered under the scheme",
+      ". Such long-term policy visibility and stability can create certainty in the EV ecosystem, helping to accelerate the EV transition. 25 ICCT REPORT | ELECTRIC VEHICLE DEMAND INCENTIVES IN INDIA SUMMARY This report examined the FAME II EV promotion scheme in India, assessing the extent to which segment-specific incentivization targets were achieved and the impact of purchase subsidies offered under the program",
+      ". In this context, the objectives of this study are: To examine the progress of FAME II in terms of fund utilization, achievement of EV sales targets under the scheme, and the status of overall EV uptake in the country; To examine the demand incentives offered under FAME II for the various vehicle segments and explore the opportunity of extending subsidies to additional segments; and To develop policy considerations for a possible third phase of the scheme"
+    ],
+    "raw_answer": "Answer: The Faster Adoption and Manufacturing of Electric Vehicles (FAME) program, specifically its second phase (FAME II), supports EV adoption in India through the provision of fiscal incentives to EV buyers.\n\nSupport: [Context 2] - \"The scheme’s second phase, FAME II, was launched in April 2019 with an initial budget outlay of ₹10,000 crore; that was later increased to ₹11,500 crore and the scheme concluded in March 2024\"",
+    "parsed_answer": "The Faster Adoption and Manufacturing of Electric Vehicles (FAME) program, specifically its second phase (FAME II), supports EV adoption in India through the provision of fiscal incentives to EV buyers.",
+    "support": "[Context 2] - \"The scheme’s second phase, FAME II, was launched in April 2019 with an initial budget outlay of ₹10,000 crore; that was later increased to ₹11,500 crore and the scheme concluded in March 2024\"",
+    "ground_truth": {
+      "key_points": [
+        "subsidies",
+        "vehicle segments",
+        "cost reduction"
+      ],
+      "must_not_claim": [
+        "wrong subsidy values"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 3,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.667,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 19,
+    "normalized_score": 76.0,
+    "failure_tags": [
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 9,
+    "question": "Compare EV adoption trends in India with global trends.",
+    "retrieved_contexts": [
+      ". In India, EV penetration in passenger cars remains modest, with EVs (BEV + PHEV) reaching about 2% of new sales in 2024. By contrast, adoption has been far stronger in two- and three-wheelers: in 2024, India sold 7.2 million electric two- and three-wheelers, ranking second globally after China (9.7 million)",
+      ". Together with the Production-Linked Incentive (PLI) scheme for advanced batteries and automotive manufacturing, these measures have underpinned EV adoption despite aﬀordability and infrastructure challenges. Looking ahead, India has set a national target of achieving 30% EV penetration across total vehicle sales by 2030, a deﬁnition that covers passenger cars as well as two- and three-wheelers, buses, and trucks. 37 IEA, Global EV Outlook 2025: Expanding sales in diverse markets",
+      ". In fiscal year 2023–24, EVs accounted for just 7% of vehicle sales in India. High upfront costs and an unfavorable financing environment remain among the major obstacles to the mass uptake of EVs, and this presents opportunities for continued targeted fiscal support to help accelerate the electric transition",
+      ". 35 Focus2move, \"South Korea 2024. EV Market, Led By Tesla, Outpaces Broader Downturn,\" Focus2move, January 18, 2025,  Yukie Tomoshige, \"Japan's Automotive Electriﬁcation Trends (2025 H1),\" JATO, September 19, 2025,  HKUST LI & FUNG SUPPLY CHAIN INSTITUTE Global Supply Chain Report 18 Figure 12: EV sales in Japan and South Korea, 2010-2024 Source: IEA, compiled by LFSCI Emerging markets such as India, Thailand, Vietnam, and Brazil are beginning to scale up adoption",
+      ". The aim is to inform business leaders and policymakers of the current landscape and emerging trends, supporting informed decision- making in this fast-changing sector. II. An Overview of the EV Consumer Market Global adoption Electric vehicles have maintained a steep adoption trajectory. Global electric car sales rose from just over 10 million units in 2022 to about 14 million in 2023, representing around 21% of new auto sales, and exceeded 17 million in 2024, accounting for nearly 26%"
+    ],
+    "raw_answer": "Answer:\nIn India, EVs reached about 2% of new car sales in 2024, while globally, electric car sales accounted for around 26% of new auto sales in 2024.\n\nSupport:\n[Context 1], [Context II]",
+    "parsed_answer": "In India, EVs reached about 2% of new car sales in 2024, while globally, electric car sales accounted for around 26% of new auto sales in 2024.",
+    "support": "[Context 1], [Context II]",
+    "ground_truth": {
+      "key_points": [
+        "global EV growth",
+        "India adoption rate",
+        "regional differences"
+      ],
+      "must_not_claim": [
+        "fake global numbers"
+      ],
+      "expected_route": "hybrid",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 2,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 18,
+    "normalized_score": 72.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 10,
+    "question": "What role do state policies like Uttar Pradesh’s semiconductor policy play in the ecosystem?",
+    "retrieved_contexts": [
+      "organization responsible for overseeing the implementation of the semiconductor policy in Uttar Pradesh",
+      ". The key objectives of the Uttar Pradesh Semiconductor Manufacturing Policy are as follows: • Establishing a robust semiconductor manufacturing ecosystem in Uttar Pradesh, poised to drive the state's economic growth, foster innovation, generate substantial employment opportunities, and enhance India's self-reliance in a strategically significant domain",
+      ".2 OBJECTIVE OF THE POLICY VISION AND OBJECTIVE OF THE POLICY To establish Uttar Pradesh as the preferred destination for semiconductor industry by offering globally competitive infrastructure and favorable policy environment for cultivating semiconductor manufacturing as an important growth driver for Uttar Pradesh through effective use of skilled force, adapting innovation and emerging technologies leading to all-round sustainable ecosystem thereby contributing towards the overall growth of",
+      ". The report then pivots to examine the state of India’s regulatory and business environment, considering topics from talent and infrastructure to taxes and tariffs, before exploring the key supporting actors in India’s semiconductor ecosystem. It then examines the strategies several Indian states have fielded in an attempt to attract semiconductor activity and provides lessons from several U.S. states in that regard. The report closes with policy recommendations",
+      ". 2 UP Electronics Corporation Limited a Nodal Agency under the Department of IT & Electronics, Govt. of Uttar Pradesh will be responsible for the effective implementation of the Uttar Pradesh Semiconductor Policy 2024. The agency shall be responsible for creating a conducive policy environment for the sustained growth of the semiconductor ecosystem in the state. It will act as a Single Window for engagement with all ecosystem stakeholders"
+    ],
+    "raw_answer": "Answer:\nThe Uttar Pradesh Semiconductor Policy 2024 is aimed at establishing Uttar Pradesh as the preferred destination for the semiconductor industry, offering globally competitive infrastructure and a favorable policy environment.\n\nSupport:\n[Context 2], [Context 3]",
+    "parsed_answer": "The Uttar Pradesh Semiconductor Policy 2024 is aimed at establishing Uttar Pradesh as the preferred destination for the semiconductor industry, offering globally competitive infrastructure and a favorable policy environment.",
+    "support": "[Context 2], [Context 3]",
+    "ground_truth": {
+      "key_points": [
+        "state incentives",
+        "local ecosystem",
+        "implementation role"
+      ],
+      "must_not_claim": [
+        "national-level claims"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 2,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 18,
+    "normalized_score": 72.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 11,
+    "question": "What is the exact water consumption required for semiconductor fabs in India?",
+    "retrieved_contexts": [
+      ".208 A currently inadequate base of domestically available, semiconductor-grade chemicals and gases are viewed by interviewees as a barrier to India’s ambitions to attract a semiconductor fab, because the requirement for foreign sourcing substantially raises costs. Investment will be required here, and, as one observer noted, an investment of some $300 million to $500 million will be needed to upgrade Indian chemicals and gas manufacturers’ quality and purity to meet semiconductor-grade needs",
+      ". 4.2.2 4.2.3 4.2.4 4.2.5 4.3 ELIGIBLE INVESTMENT Semiconductor Fabs: Fiscal support as percentage of project cost shall be limited to the activities defined under section 2.12 of the Guidelines issued for Modified Scheme for setting up of Semiconductor Fabs in India by the MeitY, Government of India dated 29th May 2023, as amended from time to time.(Glossary 8 (ii)) 4.3.1 Display Fabs: Fiscal support as percentage of project cost shall be limited to the activities defined under section 2",
+      ".”110 Semiconductor Fabrication Based on conclusions drawn from ITIF interviews with industry stakeholders, most were confident that India is likely to commission two to three fabs with varied technologies looking at semiconductors at a commercial production scale at the 28 nm or above range within the next five years. Interviewees agreed that it would be some years before India is likely to field fabs producing chips at the sub-28 (nm) range",
+      ". 91,526 crore. The fab facility will be set up in technology partnership with PSMC, Taiwan. The production capacity of the project would be around 50,000 wafer starts per month (WSPM). Tata Electronics Private Limited (TEPL) is establishing semiconductor manufacturing facility in Assam with an investment of Rs.27,120 crores. The facility will use indigenous semiconductor packaging technologies with a production capacity of 48 million units per day",
+      ". Water Supply:State Govt. will ensure water supply to Semiconductor units at their Project site. Unit shall be permitted to get power through open access. Power banking for Renewable / Green Energy shall be provided to the unit, it will be governed as per (Electricity Regulatory Commission) ERC guidelines of the state. The government will ensure sufficient redundancy in the power grid to guarantee a reliable power supply for the seamless operations of FAB projects. 6.2 6.2.1 6.2.2 6.2.3 6.2.4 6"
+    ],
+    "raw_answer": "I don't have enough information to answer this.\n\nSupport:\nNone of the provided context blocks mention the exact water consumption required for semiconductor fabs in India.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [],
+      "must_not_claim": [
+        "exact water usage numbers"
+      ],
+      "expected_route": "refuse",
+      "requires_web": true
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 5,
+      "routing": 5,
+      "retrieval_recall_proxy": 1.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 25,
+    "normalized_score": 100.0,
+    "failure_tags": []
+  },
+  {
+    "id": 12,
+    "question": "What is the exact cost of setting up a semiconductor fab in India according to policy documents?",
+    "retrieved_contexts": [
+      "Modified Scheme for setting up of Semiconductor Fabs in India seeking incentive for the project pertaining to manufacturing or expansion of …………",
+      ". Modified Scheme for Semiconductor Fabs in India was notified by the Ministry of Electronics and Information Technology (MeitY) on October 4, 2022, through Gazette Notification Number CG-DL-E- 04102022-239339 The modified scheme provides a fiscal support of 50% of the project cost for setting up semiconductor fabs in India. The project cost includes the cost of land, building, plant, machinery, equipment, and associated utilities",
+      "., hereby, acknowledge that the incentives that would / may be provided to us under the Modified Scheme for setting up of Semiconductor Fabs facilities in India, notified by Ministry of Electronics and Information Technology vide Notification No. CG-DL-E-04102022-239339 dated 04.10.2022, will be provided to us based on, and after relying upon, the information provided by us to avail the said incentives",
+      ". 4.2.2 4.2.3 4.2.4 4.2.5 4.3 ELIGIBLE INVESTMENT Semiconductor Fabs: Fiscal support as percentage of project cost shall be limited to the activities defined under section 2.12 of the Guidelines issued for Modified Scheme for setting up of Semiconductor Fabs in India by the MeitY, Government of India dated 29th May 2023, as amended from time to time.(Glossary 8 (ii)) 4.3.1 Display Fabs: Fiscal support as percentage of project cost shall be limited to the activities defined under section 2",
+      ".208 A currently inadequate base of domestically available, semiconductor-grade chemicals and gases are viewed by interviewees as a barrier to India’s ambitions to attract a semiconductor fab, because the requirement for foreign sourcing substantially raises costs. Investment will be required here, and, as one observer noted, an investment of some $300 million to $500 million will be needed to upgrade Indian chemicals and gas manufacturers’ quality and purity to meet semiconductor-grade needs"
+    ],
+    "raw_answer": "Answer: I don't have enough information to answer this.\n\nSupport:\n[Context 2] does not provide the specific cost for setting up a semiconductor fab in India, only mentioning that the project cost includes the cost of land, building, plant, machinery, equipment, and associated utilities.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [],
+      "must_not_claim": [
+        "exact fab cost"
+      ],
+      "expected_route": "refuse",
+      "requires_web": true
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 5,
+      "routing": 5,
+      "retrieval_recall_proxy": 1.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 25,
+    "normalized_score": 100.0,
+    "failure_tags": []
+  },
+  {
+    "id": 13,
+    "question": "What are the exact battery mineral reserves available in India for EV production?",
+    "retrieved_contexts": [
+      ". While cobalt intensity per battery is falling, absolute demand is expected to remain steady or rise modestly due to EV volume growth. 81 USGS, Mineral Commodity Summaries 2024",
+      ". In North America, capacity remains on a smaller scale but is accelerating strongly. As of 2023, announced EV battery production capacity in the US was around 131 GWh, and the number has reached 200 GWh in 2024, doubling the number in 2022.104 The country is expected to have an estimated capacity of 1,037 GWh annually by 2028",
+      "., 2021). Other ICCT research projected that E2Ws and electric cars would together account for 66% of the cumulative battery capacity requirement in India in 2035 under an ambitious 16 ICCT REPORT | ELECTRIC VEHICLE DEMAND INCENTIVES IN INDIA EV uptake scenario (Gode et al., 2021). By promoting the uptake of private electric PCs, a larger demand for battery cells can be generated in a shorter span of time, thereby accelerating the pace of reduction in the price of battery packs in the country",
+      ". Minimum recycled content in new EV/industrial batteries applies from August 2031 (≥16% cobalt, 6% lithium, 6% nickel, 85% lead) and increases again in 2036. Battery passports (from 2027) will display recycled content and footprint data, enabling market pull for ‘low-carbon, high- recycled’ batteries",
+      ". Comparison of Major EV Battery Chemistries (2023-2025) Chemistry Typical Energy Density (Wh/kg) Relative Cost (2024, USD/kWh) Safety & Thermal Stability Advantages Limitations Leading Manufacturers / Developers Commercial Status (as of 2025) Lithium Iron Phosphate (LFP) 150-180 90-110 Very high (excellent thermal stability, no cobalt/nickel) Low cost (Co/Ni- free); long cycle life; high safety Lower energy density limits long- range EVs; performance reduced in cold BYD (Blade Battery), CATL,"
+    ],
+    "raw_answer": "I don't have enough information to answer this.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [],
+      "must_not_claim": [
+        "exact mineral reserves"
+      ],
+      "expected_route": "refuse",
+      "requires_web": true
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 5,
+      "routing": 5,
+      "retrieval_recall_proxy": 1.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 25,
+    "normalized_score": 100.0,
+    "failure_tags": []
+  },
+  {
+    "id": 14,
+    "question": "What is the exact number of semiconductor fabs currently operational in India?",
+    "retrieved_contexts": [
+      ".”110 Semiconductor Fabrication Based on conclusions drawn from ITIF interviews with industry stakeholders, most were confident that India is likely to commission two to three fabs with varied technologies looking at semiconductors at a commercial production scale at the 28 nm or above range within the next five years. Interviewees agreed that it would be some years before India is likely to field fabs producing chips at the sub-28 (nm) range",
+      ". As the McKinsey Global Institute (MGI) explained, “[T]he global semiconductor industry is poised for a decade of growth and is projected to become a trillion-dollar industry by 2030.”43 Over 70 new semiconductor fabs are expected to be constructed worldwide by 2030 to satisfy this growing demand.44 India will certainly be one of the many counties competing for this growth",
+      ". Modified Scheme for Semiconductor Fabs in India was notified by the Ministry of Electronics and Information Technology (MeitY) on October 4, 2022, through Gazette Notification Number CG-DL-E- 04102022-239339 The modified scheme provides a fiscal support of 50% of the project cost for setting up semiconductor fabs in India. The project cost includes the cost of land, building, plant, machinery, equipment, and associated utilities",
+      "., hereby, acknowledge that the incentives that would / may be provided to us under the Modified Scheme for setting up of Semiconductor Fabs facilities in India, notified by Ministry of Electronics and Information Technology vide Notification No. CG-DL-E-04102022-239339 dated 04.10.2022, will be provided to us based on, and after relying upon, the information provided by us to avail the said incentives",
+      ". 4.2.2 4.2.3 4.2.4 4.2.5 4.3 ELIGIBLE INVESTMENT Semiconductor Fabs: Fiscal support as percentage of project cost shall be limited to the activities defined under section 2.12 of the Guidelines issued for Modified Scheme for setting up of Semiconductor Fabs in India by the MeitY, Government of India dated 29th May 2023, as amended from time to time.(Glossary 8 (ii)) 4.3.1 Display Fabs: Fiscal support as percentage of project cost shall be limited to the activities defined under section 2"
+    ],
+    "raw_answer": "I don't have enough information to answer this.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [],
+      "must_not_claim": [
+        "exact fab count"
+      ],
+      "expected_route": "refuse",
+      "requires_web": true
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 5,
+      "routing": 5,
+      "retrieval_recall_proxy": 1.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 25,
+    "normalized_score": 100.0,
+    "failure_tags": []
+  },
+  {
+    "id": 15,
+    "question": "What are the exact EV sales numbers in India for the current month?",
+    "retrieved_contexts": [
+      "Sep-2022 Oct-2022 Nov-2022 Dec-2022 Jan-2023 Feb-2023 Mar-2023 Apr-2023 May-2023 Jun-2023 Jul-2023 Aug-2023 Sep-2023 Oct-2023 Nov-2023 Dec-2023 Jan-2024 Feb-2024 Two-wheeler EV sales share ₹ 10,000/kWh, capped at 20% of ex-showroom price ₹ 15,000/kWh, capped at 40% of ex-showroom price ₹ 10,000/kWh, capped at 15% of ex-factory price THE INTERNATIONAL COUNCIL ON CLEAN TRANSPORTATION THEICCT",
+      "FY 2019–20 to 4% in FY 2023–On a cumulative basis, EV penetration rose from 1% in FY 2019–20 to 7% in FY 2023–6 ICCT REPORT | ELECTRIC VEHICLE DEMAND INCENTIVES IN INDIA Figure 2 Annual EV uptake in new vehicle sales from FY 2019–20 to FY 2023–24 0% 0% 2% 5% 5% 0% 0% 0% 1% 2% 1% 1% 2% 4% 4% 1% 1% 2% 5% 7% 0% 1% 2% 3% 4% 5% 6% 7% 8% FY 2019-20 FY 2020-21 FY 2021-22 FY 2022-23 FY 2023-24 Two-wheeler Passenger car Bus All segments Three-wheeler 18% 32% 44% 52% 54% 15% 20% 25% 30% 35% 40% 45% 50%",
+      ". In fiscal year 2023–24, EVs accounted for just 7% of vehicle sales in India. High upfront costs and an unfavorable financing environment remain among the major obstacles to the mass uptake of EVs, and this presents opportunities for continued targeted fiscal support to help accelerate the electric transition",
+      ". Figure 13: EV sales in selected emerging markets in Asia, 2010-2024 Source: IEA, compiled by LFSCI The EV market in Latin America is expanding rapidly from a low base. By the end of 2024, the EV ﬂeet in Latin America and the Caribbean reached about 444,000 units, up nearly 187% from 2023. In Brazil—the region’s largest auto market—EV sales more than doubled in 2024 to approximately 125,000 units, achieving a new-car sales share of about 6.4%",
+      ".0% 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 EV Adoption rate by year *As of October 2023 TIMELINE – STATE EV POLICY NOTIFICATION 2017 Karnataka 2019 Uttar Pradesh Tamil Nadu Madhya Pradesh Uttarakhand 2021 Meghalaya Odisha West Bengal Maharashtra Assam Goa Gujarat 2018 Andhra Pradesh Kerala 2020 Delhi Telangana 2022 Himachal Pradesh Chandigarh Tripura Haryana Chhattisgarh Rajasthan Ladakh Jharkhand Manipur 2023 Punjab STATUS - STATE EV POLICIES 26 States/UTs with Notified EV Policy 7"
+    ],
+    "raw_answer": "I don't have enough information to answer this.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [],
+      "must_not_claim": [
+        "latest monthly EV sales"
+      ],
+      "expected_route": "refuse",
+      "requires_web": true
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 5,
+      "routing": 5,
+      "retrieval_recall_proxy": 1.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 25,
+    "normalized_score": 100.0,
+    "failure_tags": []
+  },
+  {
+    "id": 16,
+    "question": "What are the latest developments under India Semiconductor Mission 2.0?",
+    "retrieved_contexts": [
+      "India Semiconductor Mission 2.0 A Major Push in Budget 2026 towards Semiconductor Self-Reliance February 7, 2026 Introduction The Union Budget 2026–27 marked a decisive moment for India’s technology ambitions with the announcement of India Semiconductor Mission 2.The new phase signals a clear policy push to deepen domestic semiconductor capabilities at a time when chips underpin every critical digital and industrial system. ISM 2",
+      "become a global semiconductor hub?” India Press Information Bureau, “India Semiconductor Mission,” December 21, 2022,  India Semiconductor Mission (ISM), “Building Semiconductor Manufacturing Ecosystem in India: Semicon India Programme” (power point presentation, New Delhi, India, October 4, 2023",
+      ". Conclusion India Semiconductor Mission 2.0 marks a decisive shift from ecosystem creation to ecosystem consolidation and global integration. By deepening support for manufacturing, design, and advanced skills, ISM 2.0 positions semiconductors as a strategic national capability—central to economic resilience, digital infrastructure, and technological sovereignty",
+      ". The enhanced budgetary support in 2026–27 provides the momentum required to accelerate execution, crowd in private investment, and scale domestic capacity across the full semiconductor value chain. Looking ahead, ISM 2.0 lays the foundation for India to emerge as a trusted hub for semiconductor design, manufacturing, and innovation",
+      ".) Ibid. Ibid. In-person interview with roundtable of India electronics manufacturing CEOs, Chennai, India, October 6, 2023. EIU, “India’s Manufacturing Moment,” ISM, “Building Semiconductor Manufacturing Ecosystem in India.” Suraksha P., “India Semiconductor Research Centre to be launched soon: MoS IT Rajeev Chandrasekhar,” Economic Times, February 24, 2023,  launched-soon-mos-it-rajeev-chandrasekhar/articleshow/98215918.cms. Dr"
+    ],
+    "raw_answer": "Answer:\nIndia Semiconductor Mission 2.0 marks a decisive shift from ecosystem creation to ecosystem consolidation and global integration.\n\nSupport:\n[Context 3], [Context 4]",
+    "parsed_answer": "India Semiconductor Mission 2.0 marks a decisive shift from ecosystem creation to ecosystem consolidation and global integration.",
+    "support": "[Context 3], [Context 4]",
+    "ground_truth": {
+      "key_points": [
+        "ISM 2.0",
+        "₹1000 crore allocation",
+        "domestic manufacturing push"
+      ],
+      "must_not_claim": [
+        "future projections not in doc"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 2,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.333,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 18,
+    "normalized_score": 72.0,
+    "failure_tags": [
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 17,
+    "question": "How are global EV supply chains evolving due to geopolitical tensions?",
+    "retrieved_contexts": [
+      ". For businesses and policymakers alike, this dual reality deﬁnes the emerging landscape of interdependence and competition in the next phase of electric mobility. HKUST LI & FUNG SUPPLY CHAIN INSTITUTE Global Supply Chain Report 82 VII. Forecasts and Scenarios Looking towards 2030 and beyond, the conﬁguration of the EV supply chain will hinge on the interaction between geopolitics, technological innovation, and regulatory convergence",
+      ". HKUST LI & FUNG SUPPLY CHAIN INSTITUTE Global Supply Chain Report 84 VIII. Conclusion: Business and Policy Implications This Global Supply Chain Report on Electric Vehicles highlights that electric vehicles are not merely a technological evolution of the automotive industry, but a strategic reorganization of global production, trade, and resource networks",
+      ". Our Global Supply Chain Analysis by Industry Electric Vehicle Expansion and Diversification: Securing EV Supply Chains Amid Global Fragmentation Solar PV Where the Sun Shines: The Changing Landscape of the Global Solar Supply Chain Apparel Threading a Green and Intelligent Tapestry: The Apparel Supply Chain Landscape in a Turbulent World Medical Device The Evolving Landscape of Global Medical Devices: Supply Chain Resilience and Innovation HKUST Li & Fung Supply Chain Institute The HKUST Li &",
+      ". At the same time, geopolitical tensions and trade barriers are reshaping supply chains. The intensiﬁcation of the US-China rivalry, European trade investigations into Chinese EV imports, and new export controls on minerals such as graphite, gallium, and germanium have heightened disruption risks. In response, automakers and battery producers are shifting towards localization of production, ‘friend-shoring’, and vertical integration",
+      ". 2024 marked a watershed moment in China’s EV industry: for the ﬁrst time, Chinese companies invested more in overseas supply chain capacity—US$16 billion—than the US$15 billion committed at home. This historic shift represents a dramatic reversal from the past decade, when nearly 80% of investment focused on the Chinese market.143 The reorientation reﬂects a conﬂuence of push and pull factors reshaping the industry’s globalization strategy. The primary impetus is severe domestic overcapacity"
+    ],
+    "raw_answer": "Answer:\nSupply chains are localizing production, 'friend-shoring', and vertical integrating in response to geopolitical tensions.\n\nSupport:\n[Context 4] - \"In response, automakers and battery producers are shifting towards localization of production, ‘friend-shoring’, and vertical integration\"",
+    "parsed_answer": "Supply chains are localizing production, 'friend-shoring', and vertical integrating in response to geopolitical tensions.",
+    "support": "[Context 4] - \"In response, automakers and battery producers are shifting towards localization of production, ‘friend-shoring’, and vertical integration\"",
+    "ground_truth": {
+      "key_points": [
+        "geopolitics",
+        "supply chain fragmentation",
+        "localization"
+      ],
+      "must_not_claim": [
+        "unsupported geopolitical claims"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 1,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.667,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 17,
+    "normalized_score": 68.0,
+    "failure_tags": [
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 18,
+    "question": "What are the global trends in semiconductor supply chain diversification?",
+    "retrieved_contexts": [
+      ".” Ibid. Khan, Mann, and Peterson, “The Semiconductor Supply Chain,” Saif M",
+      ". Taiwan alone produces over 60 per cent of the world’s semiconductors and nearly 90 per cent of the most advanced chips, leaving global supply chains vulnerable to external shocks and geopolitical tensions. In response, major economies are recalibrating their strategies. The United States, the European Union, Japan and South Korea have launched national initiatives to strengthen domestic chip manufacturing and diversify supply chains",
+      ". The disruptions of recent years—from semiconductor shortages to spikes in critical-mineral prices—have exposed the risks of over-concentrated sourcing and just-in- time logistics. Companies must now diversify supply for core inputs such as battery cells and chips, develop alternative procurement channels, and secure upstream access through offtake agreements or equity participation in mines and reﬁneries",
+      ". Production delays and rising costs followed, slowing economic activity across countries. These shocks revealed the risks of relying on a narrow set of suppliers. Today, the semiconductor industry is dominated by a few countries, including Taiwan, South Korea, Japan, China and the United States",
+      ". 23/35 An overview of the strategic approaches of the world’s top 10 semiconductor equipment companies toward the Southeast Asian market shows that these manufacturers have positioned Southeast Asia as a strategic growth region for the semiconductor industry. Their goal is to expand market presence by increasing capital investment, responding to the rising demand for artificial intelligence, strengthening technical support in specific locations, and promoting supply chain diversification"
+    ],
+    "raw_answer": "Answer:\nThe global trend in semiconductor supply chain diversification is to strengthen domestic chip manufacturing, diversify supply chains, and secure upstream access through offtake agreements or equity participation in mines and reﬁneries.\n\nSupport:\n[Context 3], [Context 4]",
+    "parsed_answer": "The global trend in semiconductor supply chain diversification is to strengthen domestic chip manufacturing, diversify supply chains, and secure upstream access through offtake agreements or equity participation in mines and reﬁneries.",
+    "support": "[Context 3], [Context 4]",
+    "ground_truth": {
+      "key_points": [
+        "diversification",
+        "resilience",
+        "global competition"
+      ],
+      "must_not_claim": [
+        "fake global stats"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 3,
+      "completeness": 2,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.333,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 20,
+    "normalized_score": 80.0,
+    "failure_tags": [
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 19,
+    "question": "How do government incentives influence EV adoption globally?",
+    "retrieved_contexts": [
+      ". Industry Incentives The State EV policies feature industry incentives ranging from fiscal to legal support extending incentives to research, innovation, development, employment generation, and skill enhancement, providing holistic support to the ecosystem. Source -State EV Policies CONSUMER DEMAND INCENTIVES Presence of initiative Absence of initiative DEMAND - EV SUBSIDY ₹7,000 Cr (approx.) Total amount of purchase subsidies offered by all states",
+      ". Source -State EV Policies INDUSTRY INCENTIVES Presence of initiative Absence of initiative INDUSTRY - CAPITAL INCENTIVES​ Industry incentives promote innovation, research, and workforce in the manufacturing electric vehicles and its components",
+      ". While purchase subsidies could encourage the uptake of electric PCs by lowering the upfront cost of vehicles for a consumer class that is highly price-sensitive, complementary measures such as scrappage policies, congestion charges, vehicle taxes, and the augmentation of public transport infrastructure could help to address the impacts of increased EV ownership on road congestion and related issues",
+      ".ORG 7 ICCT REPORT | ELECTRIC VEHICLE DEMAND INCENTIVES IN INDIA DEMAND INCENTIVES ANALYSIS AND RECOMMENDATIONS We next study the impact of the purchase subsidies offered under FAME II on the upfront cost and the total cost of ownership (TCO) of EVs and examine the effectiveness of demand incentives in bringing about cost parity with conventional vehicles. We also explore the opportunity of extending incentives to segments that were not covered under the scheme’s benefits",
+      ". Such long-term policy visibility and stability can create certainty in the EV ecosystem, helping to accelerate the EV transition. 25 ICCT REPORT | ELECTRIC VEHICLE DEMAND INCENTIVES IN INDIA SUMMARY This report examined the FAME II EV promotion scheme in India, assessing the extent to which segment-specific incentivization targets were achieved and the impact of purchase subsidies offered under the program"
+    ],
+    "raw_answer": "I don't have enough information to answer this.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [
+        "subsidies",
+        "policy incentives",
+        "market adoption"
+      ],
+      "must_not_claim": [
+        "incorrect policy impacts"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 0,
+      "routing": 0,
+      "retrieval_recall_proxy": 0.333,
+      "citation": 0,
+      "constraint_compliance": 5
+    },
+    "total": 10,
+    "normalized_score": 40.0,
+    "failure_tags": [
+      "wrong_refusal",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 20,
+    "question": "What role do critical minerals play in EV supply chains?",
+    "retrieved_contexts": [
+      ". This move came after the country signed a critical minerals partnership with the EU in November 2022, illustrating how resource-rich nations are seeking greater value capture and strategic alliances. These developments underscore a deﬁning theme of 2023-2025: the global race to establish secure, resilient, and sustainable EV supply chains. This report provides an updated overview of the EV market and examines each stage of the value chain, from raw materials to ﬁnal assembly and recycling",
+      ". From upstream extraction and processing of critical minerals to mid-stream battery and motor manufacturing and downstream vehicle assembly and logistics, each stage involves distinct technological capabilities, policy incentives, and regional strengths. Together, these tiers determine cost competitiveness, innovation speed, and supply-chain resilience. Raw materials for EVs Modern electric vehicles (EVs) rely on a far broader set of critical raw materials than conventional cars",
+      ". These regulatory requirements ensure a more robust demand base for secondary-source materials and strengthen the circular-economy dimension of the EV supply chain. In sum, raw materials remain both the foundation and the Achilles’ heel of the EV supply chain",
+      ".245 The MSP coordinates member nations to address four major critical minerals challenges: 1) diversifying and stabilizing global supply chains; 2) investment in those supply chains; 3) promoting high environmental, social, and governance standards in the mining, processing, and recycling sectors; and 4) increasing recycling of critical minerals",
+      ". In sum, raw materials remain both the foundation and the Achilles’ heel of the EV supply chain. Between 2023 and 2025, supply expanded through new mines and reﬁning capacity— from lithium projects in Zimbabwe and Namibia to Indonesia’s rapid build-out of nickel and cobalt reﬁning—while governments tightened regulations through China’s graphite export controls and the EU’s CRMA. Price volatility, exempliﬁed by the lithium carbonate surge of 2022 and collapse of 2023, is likely to persist"
+    ],
+    "raw_answer": "Answer: Critical minerals are both the foundation and the Achilles’ heel of the EV supply chain.\n\nSupport:\n[Context 1], [Context 5]",
+    "parsed_answer": "Critical minerals are both the foundation and the Achilles’ heel of the EV supply chain.",
+    "support": "[Context 1], [Context 5]",
+    "ground_truth": {
+      "key_points": [
+        "lithium",
+        "cobalt",
+        "nickel",
+        "battery dependency"
+      ],
+      "must_not_claim": [
+        "incorrect mineral sources"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 1,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.75,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 17,
+    "normalized_score": 68.0,
+    "failure_tags": [
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 21,
+    "question": "Analyze how semiconductor policy and EV policy together impact industrial growth in India.",
+    "retrieved_contexts": [
+      ".42 In summary, India’s rapidly growing economy will likely dramatically expand its demand for semiconductors in the coming years, making the country potentially more attractive to semiconductor producers. A final point on growing demand is that, aside from India’s market specifically, analysts expect the global semiconductor industry to also continue to boom in coming years",
+      ".2 OBJECTIVE OF THE POLICY VISION AND OBJECTIVE OF THE POLICY To establish Uttar Pradesh as the preferred destination for semiconductor industry by offering globally competitive infrastructure and favorable policy environment for cultivating semiconductor manufacturing as an important growth driver for Uttar Pradesh through effective use of skilled force, adapting innovation and emerging technologies leading to all-round sustainable ecosystem thereby contributing towards the overall growth of",
+      ".” Ibid. Richard M. Rossow, “India’s Changing States” (CSIS, February 19, 2016),  Nikhil Inamdar, “Semiconductors: Can India become a global chip powerhouse?” BBC, July 26, 2023,  “Gujarat announces ‘Semiconductor Policy’ with heavy subsidies,” The Hindu Business Line, July 27, 2022,  policy-with-heavy-subsidies/article65689178.ece. Gujarat, “Gujarat Semiconductor Policy (2022–2027),”  _2707.pdf. “Gujarat announces ‘Semiconductor Policy’ with heavy subsidies,” The Hindu Business Line",
+      ". The report then pivots to examine the state of India’s regulatory and business environment, considering topics from talent and infrastructure to taxes and tariffs, before exploring the key supporting actors in India’s semiconductor ecosystem. It then examines the strategies several Indian states have fielded in an attempt to attract semiconductor activity and provides lessons from several U.S. states in that regard. The report closes with policy recommendations",
+      ". This shift reflects India’s move towards deeper technological capability and reduced dependence on external systems, strengthening its position in the global semiconductor value chain. Anticipated Impact of Semiconductor Programme in 2026–27 India’s semiconductor programme has been recalibrated in response to intensifying global competition and the concentration of advanced chip technologies among a limited number of players"
+    ],
+    "raw_answer": "I don't have enough information to answer this.\n\nSupport: None. The provided contexts do not contain any information about the relationship between semiconductor policy and EV policy, or their combined impact on industrial growth in India.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [
+        "industrial growth",
+        "electronics",
+        "EV demand",
+        "policy synergy"
+      ],
+      "must_not_claim": [
+        "unsupported macroeconomic claims"
+      ],
+      "expected_route": "hybrid",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 0,
+      "routing": 0,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 0,
+      "constraint_compliance": 5
+    },
+    "total": 10,
+    "normalized_score": 40.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "wrong_refusal",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 22,
+    "question": "Evaluate the effectiveness of India's semiconductor incentives compared to global policies.",
+    "retrieved_contexts": [
+      ".116 SEMICONDUCTOR AND ELECTRONICS MANUFACTURING POLICY ENVIRONMENT The Indian government has extended some of the world’s most generous incentives to attract semiconductor ATP and fabrication activity",
+      ". Providing incentives for the entirety of the semiconductor ecosystem, including silicon wafer manufacturing and equipment manufacturing, will further increase India’s attractiveness to the semiconductor industry. INDIA-U.S",
+      ". Localizing ecosystems, easing regulations, and introducing tax breaks and other financial incentives will all help to attract semiconductor manufacturers to India. India’s production-linked incentive and design-linked incentive both support companies setting up facilities in the country, and further incentives will help to attract more business",
+      ".119 India’s semiconductor investment package, offering a 50 percent match by the central government and 20 to 25 percent by the relevant state government, is currently the world’s most generous. Separately from its specifically semiconductor-focused incentive packages, a key component of India’s strategy to accelerate its path to becoming a global hub for electronics manufacturing is its $20 billion Production Linked Incentive (PLI) scheme",
+      ". This section first examines lessons from India’s effort to attract semiconductor manufacturers such as Micron and then considers specific regulatory policy issues, such as taxation, labor market policy, tariffs and import policies, and customs and trade facilitation. Lessons From Attracting Micron’s Semiconductor ATP Investment As noted, Micron’s commitment to launch a world-class ATP facility represented a major victory for India"
+    ],
+    "raw_answer": "Answer: The Indian government's semiconductor incentive package is currently the world's most generous.\n\nSupport: [Context 4] - \"India's semiconductor investment package, offering a 50 percent match by the central government and 20 to 25 percent by the relevant state government, is currently the world’s most generous.\"",
+    "parsed_answer": "The Indian government's semiconductor incentive package is currently the world's most generous.",
+    "support": "[Context 4] - \"India's semiconductor investment package, offering a 50 percent match by the central government and 20 to 25 percent by the relevant state government, is currently the world’s most generous.\"",
+    "ground_truth": {
+      "key_points": [
+        "India incentives",
+        "global comparison",
+        "policy effectiveness"
+      ],
+      "must_not_claim": [
+        "unsupported rankings"
+      ],
+      "expected_route": "hybrid",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 2,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 18,
+    "normalized_score": 72.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 23,
+    "question": "What are the major risks in global semiconductor and EV supply chains?",
+    "retrieved_contexts": [
+      ". Production delays and rising costs followed, slowing economic activity across countries. These shocks revealed the risks of relying on a narrow set of suppliers. Today, the semiconductor industry is dominated by a few countries, including Taiwan, South Korea, Japan, China and the United States",
+      ". They enable manufacturing units, hospitals, transport systems and satellites. A reliable supply of semiconductors is therefore essential for economic stability and continuity across sectors. Recent global disruptions have underscored this dependence. The COVID-19 pandemic exposed serious weaknesses in semiconductor supply chains, with shortages affecting more than 169 industries worldwide. Production delays and rising costs followed, slowing economic activity across countries",
+      ". Investment risk is also reduced when investors are assured of a stable policy landscape. Manufacturers can more accurately forecast the demand for EVs, components, and batteries, facilitating the development of domestic supply chains and creation of employment opportunities. A higher number of private sector participants can potentially reduce dependency on subsidies and other forms of government support in the long run",
+      ".7% of all EV battery installations worldwide. Overall, the top ﬁve suppliers controlled well over 70% of global EV battery shipments, underscoring a pronounced ‘winner-takes-most’ dynamic in the sector. 2.5 Supply chain constraints During 2021-2022, there were signiﬁcant shortages in semiconductors aﬀecting EV production, but by 2023 the chip shortage eased for most components, though some electronics remained tight into 2024",
+      ".9%, BYD 17.8%,\" CNEVPost, August 4, 2025,  Lei Kang, \"Global EV battery market share in 2024: CATL 37.9%, BYD 17.2%,\" CNEVPost, 2025,  113 Kang Global EV battery market share in H1 2025: CATL 37.9%, BYD 17.8%; Kang Global EV battery market share in 2024: CATL 37.9%, BYD 17.2%. HKUST LI & FUNG SUPPLY CHAIN INSTITUTE Global Supply Chain Report 57 semiconductor shortage in scale, later describing supply constraints as the company’s ‘biggest constraint’ on output in 2023"
+    ],
+    "raw_answer": "Answer:\nRisks of relying on a narrow set of suppliers.\n\nSupport:\n[Context 1] \"These shocks revealed the risks of relying on a narrow set of suppliers.\"\n\nNote: This answer is directly supported by Context 1, which mentions the risks of relying on a narrow set of suppliers.",
+    "parsed_answer": "Risks of relying on a narrow set of suppliers.",
+    "support": "[Context 1] \"These shocks revealed the risks of relying on a narrow set of suppliers.\"\n\nNote: This answer is directly supported by Context 1, which mentions the risks of relying on a narrow set of suppliers.",
+    "ground_truth": {
+      "key_points": [
+        "supply chain risk",
+        "geopolitics",
+        "resource dependency"
+      ],
+      "must_not_claim": [
+        "irrelevant risks"
+      ],
+      "expected_route": "rag",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 1,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 17,
+    "normalized_score": 68.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 24,
+    "question": "Predict the future of India's semiconductor ecosystem based on current policies.",
+    "retrieved_contexts": [
+      ". That is the challenge confronting India: to create a business and policy environment that doesn’t just attract one-off investments, but that fosters the emergence of a deep and vibrant semiconductor ecosystem active in all the key phases of semiconductor production—research and development (R&D), design, fabrication, and ATP—with a network of suppliers and supporting institutions that power a globally cost- and innovation-competitive semiconductor ecosystem",
+      ".S. states in that regard. The report closes with policy recommendations. WHY INDIA SHOULD SEEK TO DEEPEN ITS PRESENCE IN GLOBAL SEMICONDUCTOR VALUE CHAINS India faces a unique moment and opportunity in time",
+      ". This shift reflects India’s move towards deeper technological capability and reduced dependence on external systems, strengthening its position in the global semiconductor value chain. Anticipated Impact of Semiconductor Programme in 2026–27 India’s semiconductor programme has been recalibrated in response to intensifying global competition and the concentration of advanced chip technologies among a limited number of players",
+      ". The report then pivots to examine the state of India’s regulatory and business environment, considering topics from talent and infrastructure to taxes and tariffs, before exploring the key supporting actors in India’s semiconductor ecosystem. It then examines the strategies several Indian states have fielded in an attempt to attract semiconductor activity and provides lessons from several U.S. states in that regard. The report closes with policy recommendations",
+      ". (See figure 1.) Figure 1: India’s semiconductor market, 2022 (actual) and 2030 forecast ($billions)26 Source: Invest India In 2021, only 9 percent of India’s semiconductor components were locally sourced.27 India intends to increase its local sourcing of semiconductors to 17 percent by 2026, which would translate into a sixfold increase in locally sourced semiconductor revenue between 2019 and 2026"
+    ],
+    "raw_answer": "I don't have enough information to answer this.\n\nSupport:\nNone. The contexts provided do not contain predictions or discussions about the future of India's semiconductor ecosystem. They mainly focus on the current state, challenges, and policy recommendations. There is no direct evidence or hint about what will happen in the future.",
+    "parsed_answer": "I don't have enough information to answer this.",
+    "support": "",
+    "ground_truth": {
+      "key_points": [
+        "future growth",
+        "policy direction",
+        "market expansion"
+      ],
+      "must_not_claim": [
+        "guaranteed predictions"
+      ],
+      "expected_route": "hybrid",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 5,
+      "completeness": 0,
+      "routing": 0,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 0,
+      "constraint_compliance": 5
+    },
+    "total": 10,
+    "normalized_score": 40.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "wrong_refusal",
+      "incomplete_answer"
+    ]
+  },
+  {
+    "id": 25,
+    "question": "Identify contradictions between policy goals and real-world EV or semiconductor adoption trends.",
+    "retrieved_contexts": [
+      ". A stable and long-term policy landscape can create benefits both on the demand side as well as the supply side of the EV ecosystem. On the demand side, sustained support from the government for a new technology helps alleviate skepticism associated with its uptake",
+      ". Together with the Production-Linked Incentive (PLI) scheme for advanced batteries and automotive manufacturing, these measures have underpinned EV adoption despite aﬀordability and infrastructure challenges. Looking ahead, India has set a national target of achieving 30% EV penetration across total vehicle sales by 2030, a deﬁnition that covers passenger cars as well as two- and three-wheelers, buses, and trucks. 37 IEA, Global EV Outlook 2025: Expanding sales in diverse markets",
+      ". However, for various reasons, those proposals have yet to reach the desired fruition. The policy underwent a small revision in October 2022, which both made it more attuned to ease of doing business aspects and enhanced the incentive packages for semiconductors",
+      ". Investment risk is also reduced when investors are assured of a stable policy landscape. Manufacturers can more accurately forecast the demand for EVs, components, and batteries, facilitating the development of domestic supply chains and creation of employment opportunities. A higher number of private sector participants can potentially reduce dependency on subsidies and other forms of government support in the long run",
+      ". Looking ahead, projections diverge by scenario. The IEA’s Stated Policies Scenario projects that EVs will exceed 40% of new car sales globally by 2030, with China reaching around 80% penetration, Europe close to 60%, and the US near 20%; its more ambitious Net Zero Emissions pathway envisions even faster uptake"
+    ],
+    "raw_answer": "Answer: None identified.\n\nSupport:\n[Contexts 1-5] do not highlight any contradictions between policy goals and real-world EV or semiconductor adoption trends. The contexts only discuss the benefits of a stable policy landscape, the importance of investment risk reduction, and projections for future EV penetration. There is no information provided about any discrepancies between policy goals and actual adoption trends.",
+    "parsed_answer": "None identified.",
+    "support": "[Contexts 1-5] do not highlight any contradictions between policy goals and real-world EV or semiconductor adoption trends. The contexts only discuss the benefits of a stable policy landscape, the importance of investment risk reduction, and projections for future EV penetration. There is no information provided about any discrepancies between policy goals and actual adoption trends.",
+    "ground_truth": {
+      "key_points": [
+        "policy vs reality",
+        "adoption gaps",
+        "implementation challenges"
+      ],
+      "must_not_claim": [
+        "fabricated contradictions"
+      ],
+      "expected_route": "hybrid",
+      "requires_web": false
+    },
+    "scores": {
+      "faithfulness": 1,
+      "completeness": 1,
+      "routing": 5,
+      "retrieval_recall_proxy": 0.0,
+      "citation": 5,
+      "constraint_compliance": 5
+    },
+    "total": 17,
+    "normalized_score": 68.0,
+    "failure_tags": [
+      "bad_retrieval",
+      "possible_hallucination",
+      "incomplete_answer"
+    ]
+  }
+]

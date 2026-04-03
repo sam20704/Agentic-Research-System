@@ -1,8 +1,11 @@
 import ollama
 
+REFUSAL_TEXT = "I don't have enough information to answer this."
+
+
 def generate_answer(query, contexts):
-    if not contexts or len(contexts) == 0:
-        return "I don't have enough information to answer this."
+    if not contexts:
+        return REFUSAL_TEXT
 
     contexts = contexts[:5]
 
@@ -21,20 +24,23 @@ Do not fill gaps.
 If you include any information not present in the context, the answer is incorrect.
 
 If the answer is not explicitly stated in the context, reply exactly:
-"I don't have enough information to answer this."
+"{REFUSAL_TEXT}"
 
 Instructions:
 - Every answer must be directly supported by one or more context blocks.
 - If support is weak, partial, or ambiguous, do not answer.
 - Keep the answer short and factual.
+- For non-refusal answers, follow the exact format below.
 
-Format:
-
+Format for answerable questions:
 Answer:
 <your answer>
 
 Support:
 [Context X], [Context Y]
+
+Format for unanswerable questions:
+{REFUSAL_TEXT}
 
 Context:
 {context_text}
@@ -48,4 +54,4 @@ Question:
         messages=[{"role": "user", "content": prompt}]
     )
 
-    return response["message"]["content"]
+    return response["message"]["content"].strip()
