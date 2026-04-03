@@ -8,5 +8,6 @@ def retrieve(query, top_k=3):
         query_embeddings=[query_embedding],
         n_results=top_k
     )
-
-    return results["documents"]
+    print("Querying vector DB...")
+    print(collection.count())
+    return results["documents"][0]

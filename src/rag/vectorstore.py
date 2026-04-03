@@ -1,7 +1,12 @@
 import chromadb
 from chromadb.config import Settings
-import uuid
-client = chromadb.Client(Settings(persist_directory="./chroma_db"))
+
+client = chromadb.Client(
+    Settings(
+        persist_directory="./chroma_db",
+        is_persistent=True
+    )
+)
 
 collection = client.get_or_create_collection(name="docs")
 
@@ -15,3 +20,5 @@ def store_embeddings(chunks, embeddings, sources):
             metadatas=[{"source": src}],
             ids=[str(uuid.uuid4())]
         )
+   
+
