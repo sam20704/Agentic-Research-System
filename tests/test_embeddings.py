@@ -1,5 +1,13 @@
-from rag.embedding import embed_texts
+from src.rag.embedding import embed_texts
 
-embeddings = embed_texts(chunks)
 
-print(f"Embedding shape: {len(embeddings)}")
+def test_embeddings():
+    chunks = [
+        "India has introduced policies to support semiconductor manufacturing.",
+        "Electric vehicles are supported through government incentives.",
+    ]
+
+    embeddings = embed_texts(chunks)
+
+    assert len(embeddings) == len(chunks)
+    assert len(embeddings[0]) > 0

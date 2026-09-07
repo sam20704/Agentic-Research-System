@@ -1,11 +1,14 @@
-from rag.retriever import retrieve
+from src.rag.retriever import retrieve
 
-query = "What is semiconductor policy in India?"
 
-results = retrieve(query)
+def test_retriever_returns_results():
+    query = "What is semiconductor policy in India?"
 
-print("\nTop Results:\n")
+    results = retrieve(query)
 
-for r in results[0]:
-    print("-" * 50)
-    print(r[:300])
+    assert isinstance(results, list)
+    assert results
+
+    for result in results:
+        assert isinstance(result, str)
+        assert result.strip()
