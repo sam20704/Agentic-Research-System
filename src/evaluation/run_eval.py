@@ -2,6 +2,7 @@ import os
 import json
 import csv
 import re
+from datetime import datetime
 from typing import List, Dict, Any
 
 from src.rag.retriever import retrieve
@@ -42,36 +43,62 @@ def save_json(data: Any, path: str):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-def save_csv(rows: List[Dict[str, Any]], path: str):
+def save_csv(rows: List[Dict[str, Any]], path: str) -> str:
+    """
+    Save CSV results.
+
+    Behavior:
+    - overwrite the target file if possible
+    - if the file is locked/open, save to a timestamped fallback file
+    - return the actual saved path
+    """
     ensure_parent_dir(path)
 
-    if not rows:
-        with open(path, "w", encoding="utf-8", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow([
-                "id",
-                "question",
-                "parsed_answer",
-                "support",
-                "expected_route",
-                "requires_web",
-                "faithfulness",
-                "completeness",
-                "routing",
-                "retrieval_recall_proxy",
-                "citation",
-                "constraint_compliance",
-                "total",
-                "normalized_score",
-                "failure_tags"
-            ])
-        return
+    default_headers = [
+        "id",
+        "question",
+        "parsed_answer",
+        "support",
+        "expected_route",
+        "requires_web",
+        "faithfulness",
+        "completeness",
+        "routing",
+        "retrieval_recall_proxy",
+        "citation",
+        "constraint_compliance",
+        "total",
+        "normalized_score",
+        "failure_tags"
+    ]
 
-    fieldnames = list(rows[0].keys())
-    with open(path, "w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    def _write_csv(target_path: str):
+        with open(target_path, "w", encoding="utf-8", newline="") as f:
+            if not rows:
+                writer = csv.writer(f)
+                writer.writerow(default_headers)
+            else:
+                fieldnames = list(rows[0].keys())
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(rows)
+
+    try:
+        _write_csv(path)
+        print(f"Saved CSV results to: {path}")
+        return path
+
+    except PermissionError:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        base, ext = os.path.splitext(path)
+        fallback_path = f"{base}_{timestamp}{ext}"
+
+        _write_csv(fallback_path)
+        print(
+            f"Could not overwrite locked file: {path}\n"
+            f"Saved CSV results instead to: {fallback_path}"
+        )
+        return fallback_path
 
 
 def normalize_text(text: str) -> str:
@@ -113,6 +140,11 @@ def parse_answer_output(raw_answer: str) -> Dict[str, Any]:
     - parsed_answer
     - support
     - has_citation
+
+    Supports:
+    - explicit "Answer:" / "Support:" format
+    - bullet answers with inline citations like [Context 1]
+    - trailing "Note:" sections, which are stripped from parsed_answer
     """
     if not raw_answer or not raw_answer.strip():
         return {
@@ -145,7 +177,24 @@ def parse_answer_output(raw_answer: str) -> Dict[str, Any]:
 
     parsed_answer = answer_match.group(1).strip() if answer_match else text
     support = support_match.group(1).strip() if support_match else ""
-    has_citation = bool(support)
+
+    parsed_answer = re.sub(
+        r"\n\s*Note:.*$",
+        "",
+        parsed_answer,
+        flags=re.DOTALL | re.IGNORECASE
+    ).strip()
+
+    inline_citations = re.findall(
+        r"$$Context\s+\d+(?:\s*,\s*Context\s+\d+)*$$",
+        text,
+        flags=re.IGNORECASE
+    )
+
+    has_citation = bool(support) or bool(inline_citations)
+
+    if not support and inline_citations:
+        support = ", ".join(sorted(set(inline_citations)))
 
     return {
         "raw_answer": text,
@@ -612,7 +661,7 @@ if __name__ == "__main__":
     results = run_evaluation(top_k=TOP_K)
 
     save_json(results, RESULTS_JSON_PATH)
-    save_csv(build_csv_rows(results), RESULTS_CSV_PATH)
+    actual_csv_path = save_csv(build_csv_rows(results), RESULTS_CSV_PATH)
 
     failures = extract_failures(results)
     save_json(failures, FAILURES_JSON_PATH)
@@ -621,5 +670,5 @@ if __name__ == "__main__":
 
     print("\nEvaluation complete.")
     print(f"Saved JSON results to: {RESULTS_JSON_PATH}")
-    print(f"Saved CSV results to: {RESULTS_CSV_PATH}")
+    print(f"Saved CSV results to: {actual_csv_path}")
     print(f"Saved failure analysis to: {FAILURES_JSON_PATH}")
