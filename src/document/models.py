@@ -103,3 +103,45 @@ class Document:
             "pages": [page.to_dict() for page in self.pages],
             "metadata": self.metadata,
         }
+
+
+@dataclass
+class DocumentProfile:
+    """
+    Diagnostic profile and metric report card for an ingested PDF document.
+    """
+    file_path: str
+    page_count: int
+    text_coverage: float
+    avg_chars_per_page: float
+    scanned_page_ratio: float
+    total_characters: int = 0
+    total_images: int = 0
+    images_per_page: float = 0.0
+    total_text_blocks: int = 0
+    avg_blocks_per_page: float = 0.0
+    estimated_table_count: int = 0
+    has_complex_layout: bool = False
+    detected_language: str = "unknown"
+    profiling_time_ms: float = 0.0
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "file_path": self.file_path,
+            "page_count": self.page_count,
+            "text_coverage": round(self.text_coverage, 4),
+            "avg_chars_per_page": round(self.avg_chars_per_page, 2),
+            "scanned_page_ratio": round(self.scanned_page_ratio, 4),
+            "total_characters": self.total_characters,
+            "total_images": self.total_images,
+            "images_per_page": round(self.images_per_page, 2),
+            "total_text_blocks": self.total_text_blocks,
+            "avg_blocks_per_page": round(self.avg_blocks_per_page, 2),
+            "estimated_table_count": self.estimated_table_count,
+            "has_complex_layout": self.has_complex_layout,
+            "detected_language": self.detected_language,
+            "profiling_time_ms": round(self.profiling_time_ms, 2),
+            "metadata": self.metadata,
+        }
+
