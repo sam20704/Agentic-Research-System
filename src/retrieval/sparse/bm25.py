@@ -1,4 +1,3 @@
-
 """BM25 sparse retrieval."""
 
 from __future__ import annotations
@@ -113,37 +112,31 @@ class BM25Retriever:
 
         results: list[RetrievalResult] = []
 
-        # for index in ranked_indices:
-        #     score = float(scores[index])
-
-        #     # Do not return chunks with no lexical match.
-        #     if score <= 0:
-        #         continue
-
-        #     results.append(
-        #         RetrievalResult(
-        #             chunk=self._chunks[index],
-        #             score=score,
-        #             rank=len(results) + 1,
-        #             retrieval_method="bm25",
-        #         )
-        #     )
         for index in ranked_indices:
             score = float(scores[index])
 
+            # Return only documents containing at least one query token.
+            # A valid lexical match may have a BM25 score of 0.0 when
+            # the query term occurs in every indexed document.
+            document_tokens = self._bm25.doc_freqs[index]
+
+            if not any(
+                token in document_tokens
+                for token in query_tokens
+            ):
+                continue
+
             results.append(
-            RetrievalResult(
-                chunk=self._chunks[index],
-                score=score,
-                rank=len(results) + 1,
-                retrieval_method="bm25",
-        )
-    )
+                RetrievalResult(
+                    chunk=self._chunks[index],
+                    score=score,
+                    rank=len(results) + 1,
+                    retrieval_method="bm25",
+                )
+            )
 
             if len(results) >= top_k:
                 break
-
-        
 
         return results
 

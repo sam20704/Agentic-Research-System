@@ -11,22 +11,55 @@ RUN_PHASE2_EMBEDDING_TESTS = (
 )
 
 
+@pytest.fixture(scope="module")
+def embedder() -> SentenceTransformerEmbedding:
+    """Load the cached BGE-M3 snapshot once for the integration tests."""
+
+    from huggingface_hub import snapshot_download
+
+    model_path = snapshot_download(
+        "BAAI/bge-m3",
+        local_files_only=True,
+    )
+
+    return SentenceTransformerEmbedding(
+        model_name=model_path,
+        device="cpu",
+        normalize_embeddings=True,
+        batch_size=8,
+        max_seq_length=1024,
+    )
+
+
 @pytest.mark.integration
 @pytest.mark.skipif(
     not RUN_PHASE2_EMBEDDING_TESTS,
-    reason="Set RUN_PHASE2_EMBEDDING_TESTS=1 to run real BGE-M3 tests",
+    reason=(
+        "Set RUN_PHASE2_EMBEDDING_TESTS=1 "
+        "to run real BGE-M3 tests"
+    ),
 )
-def test_bge_m3_embedding():
-    embedder = SentenceTransformerEmbedding(
-        model_name="BAAI/bge-m3",
-        device="cpu",
-    )
+def test_bge_m3_dimension(
+    embedder: SentenceTransformerEmbedding,
+) -> None:
+    assert embedder.dimension == 1024
 
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not RUN_PHASE2_EMBEDDING_TESTS,
+    reason=(
+        "Set RUN_PHASE2_EMBEDDING_TESTS=1 "
+        "to run real BGE-M3 tests"
+    ),
+)
+def test_bge_m3_single_embedding(
+    embedder: SentenceTransformerEmbedding,
+) -> None:
     vector = embedder.embed_text(
         "India provides incentives for semiconductor manufacturing."
     )
 
-    assert vector
     assert len(vector) == embedder.dimension
     assert all(np.isfinite(value) for value in vector)
 
@@ -34,14 +67,14 @@ def test_bge_m3_embedding():
 @pytest.mark.integration
 @pytest.mark.skipif(
     not RUN_PHASE2_EMBEDDING_TESTS,
-    reason="Set RUN_PHASE2_EMBEDDING_TESTS=1 to run real BGE-M3 tests",
+    reason=(
+        "Set RUN_PHASE2_EMBEDDING_TESTS=1 "
+        "to run real BGE-M3 tests"
+    ),
 )
-def test_bge_m3_batch_embeddings():
-    embedder = SentenceTransformerEmbedding(
-        model_name="BAAI/bge-m3",
-        device="cpu",
-    )
-
+def test_bge_m3_batch_embeddings(
+    embedder: SentenceTransformerEmbedding,
+) -> None:
     texts = [
         "India semiconductor manufacturing policy.",
         "Electric vehicle incentives in India.",
@@ -51,7 +84,12 @@ def test_bge_m3_batch_embeddings():
     vectors = embedder.embed_texts(texts)
 
     assert len(vectors) == len(texts)
-    assert all(len(vector) == embedder.dimension for vector in vectors)
+
+    assert all(
+        len(vector) == embedder.dimension
+        for vector in vectors
+    )
+
     assert all(
         np.isfinite(value)
         for vector in vectors
@@ -62,15 +100,14 @@ def test_bge_m3_batch_embeddings():
 @pytest.mark.integration
 @pytest.mark.skipif(
     not RUN_PHASE2_EMBEDDING_TESTS,
-    reason="Set RUN_PHASE2_EMBEDDING_TESTS=1 to run real BGE-M3 tests",
+    reason=(
+        "Set RUN_PHASE2_EMBEDDING_TESTS=1 "
+        "to run real BGE-M3 tests"
+    ),
 )
-def test_bge_m3_embeddings_are_normalized():
-    embedder = SentenceTransformerEmbedding(
-        model_name="BAAI/bge-m3",
-        device="cpu",
-        normalize_embeddings=True,
-    )
-
+def test_bge_m3_embeddings_are_normalized(
+    embedder: SentenceTransformerEmbedding,
+) -> None:
     vector = np.asarray(
         embedder.embed_text(
             "Semiconductor manufacturing incentives."
@@ -80,4 +117,72 @@ def test_bge_m3_embeddings_are_normalized():
 
     norm = np.linalg.norm(vector)
 
-    assert np.isclose(norm, 1.0, atol=1e-4)
+    assert np.isclose(
+        norm,
+        1.0,
+        atol=1e-4,
+    )
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not RUN_PHASE2_EMBEDDING_TESTS,
+    reason=(
+        "Set RUN_PHASE2_EMBEDDING_TESTS=1 "
+        "to run real BGE-M3 tests"
+    ),
+)
+def test_bge_m3_multilingual_embeddings(
+    embedder: SentenceTransformerEmbedding,
+) -> None:
+    texts = [
+        "Semiconductor manufacturing incentives in India.",
+        "भारत में सेमीकंडक्टर विनिर्माण के लिए प्रोत्साहन।",
+        "భారతదేశంలో సెమీకండక్టర్ తయారీకి ప్రోత్సాహకాలు.",
+    ]
+
+    vectors = embedder.embed_texts(texts)
+
+    assert len(vectors) == 3
+
+    for vector in vectors:
+        assert len(vector) == embedder.dimension
+        assert np.all(np.isfinite(vector))
+
+        norm = np.linalg.norm(
+            np.asarray(vector, dtype=np.float32)
+        )
+
+        assert np.isclose(
+            norm,
+            1.0,
+            atol=1e-4,
+        )
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not RUN_PHASE2_EMBEDDING_TESTS,
+    reason=(
+        "Set RUN_PHASE2_EMBEDDING_TESTS=1 "
+        "to run real BGE-M3 tests"
+    ),
+)
+def test_bge_m3_semantic_similarity(
+    embedder: SentenceTransformerEmbedding,
+) -> None:
+    texts = [
+        "India semiconductor manufacturing incentives.",
+        "भारत में सेमीकंडक्टर विनिर्माण के लिए प्रोत्साहन।",
+        "Electric vehicle incentives in India.",
+    ]
+
+    vectors = np.asarray(
+        embedder.embed_texts(texts),
+        dtype=np.float32,
+    )
+
+    similarity = vectors @ vectors.T
+
+    # English and Hindi describe the same general concept.
+    assert similarity[0, 1] > similarity[0, 2]
