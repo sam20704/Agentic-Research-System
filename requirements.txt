@@ -7,5 +7,4 @@ pypdf
 pymupdf
 ollama
 qdrant-client
-#rank-bm25
 rank-bm25
