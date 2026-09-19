@@ -1,303 +1,169 @@
-from src.rag.embedding import model
-from src.rag.vectorstore import collection
+"""Backward-compatible RAG retriever adapter (Phase 2.4).
+
+The canonical retrieval implementation lives in src/retrieval/hybrid.py.
+
+This module preserves the existing retrieve() API while delegating all
+retrieval logic to HybridRetriever.
+"""
+
+from __future__ import annotations
+
+from src.retrieval.embeddings.sentence_transformer import (
+    SentenceTransformerEmbedding,
+)
+from src.retrieval.hybrid import HybridRetriever
+from src.retrieval.sparse.bm25 import BM25Retriever
+from src.retrieval.vectorstore import QdrantVectorStore
+
+# ---------------------------------------------------------------------
+# Default Retrieval Configuration
+# ---------------------------------------------------------------------
+
+DEFAULT_TOP_K = 10
+DEFAULT_BM25_TOP_K = 20
+DEFAULT_DENSE_TOP_K = 20
 
 
-DEFAULT_TOP_K = 5
-DEFAULT_FETCH_K = 10
-MIN_SIMILARITY = 0.15
+# ---------------------------------------------------------------------
+# Backward-Compatible RAG Retriever
+# ---------------------------------------------------------------------
 
 
-def expand_query(query: str) -> str:
+class RAGRetriever:
     """
-    Light query expansion for policy/economy terminology.
-    Keep this conservative to avoid retrieval drift.
+    Thin compatibility adapter around HybridRetriever.
+
+    Phase 2.4 canonical retrieval flow:
+
+        Query
+          ↓
+      HybridRetriever
+          ↓
+    BM25 + Dense + RRF
+          ↓
+    RetrievalResult[]
     """
-    expansion_terms = (
-        " semiconductor policy incentives fiscal support subsidy "
-        "government support manufacturing EV supply chain"
+
+    def __init__(
+        self,
+        bm25_retriever: BM25Retriever,
+        vectorstore: QdrantVectorStore,
+        embedder: SentenceTransformerEmbedding,
+        bm25_top_k: int = DEFAULT_BM25_TOP_K,
+        dense_top_k: int = DEFAULT_DENSE_TOP_K,
+    ) -> None:
+        self.bm25_top_k = bm25_top_k
+        self.dense_top_k = dense_top_k
+
+        self.retriever = HybridRetriever(
+            bm25_retriever=bm25_retriever,
+            vectorstore=vectorstore,
+            embedder=embedder,
+        )
+
+    def retrieve(
+        self,
+        query: str,
+        top_k: int | None = None,
+        verbose: bool = False,
+        return_metadata: bool = False,
+    ):
+        """
+        Delegate retrieval to the canonical HybridRetriever.
+        """
+
+        if not query or not query.strip():
+            raise ValueError("query must not be empty")
+
+        # Preserve legacy behavior where callers may pass top_k=None.
+        top_k = top_k or DEFAULT_TOP_K
+
+        results = self.retriever.retrieve(
+            query=query,
+            bm25_top_k=self.bm25_top_k,
+            dense_top_k=self.dense_top_k,
+            final_top_k=top_k,
+        )
+
+        if verbose:
+            print("=" * 60)
+            print("HYBRID RETRIEVAL")
+            print("=" * 60)
+            print(f"Query : {query}")
+            print()
+
+            for result in results:
+                print(
+                    f"[{result.rank}] "
+                    f"{result.chunk.chunk_id} "
+                    f"Score={result.score:.4f}"
+                )
+                print(f"Source : {result.chunk.source}")
+                print(f"Pages  : {result.chunk.page_numbers}")
+                print(
+                    "Methods: "
+                    f"{result.chunk.metadata.get('retrieval_sources', [])}"
+                )
+                print(result.chunk.text[:180].replace("\n", " "))
+                print()
+
+        if return_metadata:
+            return results
+
+        # Preserve the legacy API: return only chunk text.
+        return [result.chunk.text for result in results]
+
+
+# ---------------------------------------------------------------------
+# Global Retriever Instance (Backward Compatibility)
+# ---------------------------------------------------------------------
+
+_retriever: RAGRetriever | None = None
+
+
+def configure_retriever(
+    bm25_retriever: BM25Retriever,
+    vectorstore: QdrantVectorStore,
+    embedder: SentenceTransformerEmbedding,
+) -> None:
+    """
+    Configure the global retriever instance.
+
+    Call this once during application startup after indexing the corpus.
+    """
+
+    global _retriever
+
+    _retriever = RAGRetriever(
+        bm25_retriever=bm25_retriever,
+        vectorstore=vectorstore,
+        embedder=embedder,
     )
-    return query.strip() + expansion_terms
-
-
-def decompose_query(query: str) -> list[str]:
-    """
-    Conservative query decomposition.
-    Only decompose when the question is clearly multi-part.
-
-    Returns a short list with the original query first.
-    """
-    q = query.strip()
-    q_lower = q.lower()
-
-    subqueries = [q]
-
-    # Compare India vs Taiwan semiconductor policy
-    if "compare" in q_lower and "india" in q_lower and "taiwan" in q_lower and "semiconductor" in q_lower:
-        subqueries.extend([
-            "India semiconductor policy",
-            "Taiwan semiconductor policy"
-        ])
-
-    # Compare India vs global EV trends
-    elif "compare" in q_lower and "india" in q_lower and "global" in q_lower and "ev" in q_lower:
-        subqueries.extend([
-            "India EV adoption trends",
-            "global EV adoption trends"
-        ])
-
-    # Combined semiconductor + EV policy impact
-    elif (
-        ("analyze" in q_lower or "impact" in q_lower or "together" in q_lower)
-        and "semiconductor" in q_lower
-        and "ev" in q_lower
-        and "india" in q_lower
-    ):
-        subqueries.extend([
-            "India semiconductor policy industrial growth",
-            "India EV policy industrial growth"
-        ])
-
-    # Contradictions / gaps
-    elif any(word in q_lower for word in ["contradiction", "contradictions", "gap", "gaps"]):
-        subqueries.extend([
-            "policy goals and adoption trends India EV",
-            "policy goals and adoption trends India semiconductor"
-        ])
-
-    # Risks in global supply chains
-    elif (
-        any(word in q_lower for word in ["risk", "risks"])
-        and "supply chain" in q_lower
-    ):
-        subqueries.extend([
-            "EV supply chain risks",
-            "semiconductor supply chain risks"
-        ])
-
-    # Challenges in India semiconductor manufacturing
-    elif (
-        any(word in q_lower for word in ["challenge", "challenges"])
-        and "india" in q_lower
-        and "semiconductor" in q_lower
-    ):
-        subqueries.extend([
-            "India semiconductor manufacturing challenges",
-            "barriers to semiconductor manufacturing in India"
-        ])
-
-    # Remove duplicates preserving order
-    seen = set()
-    final_subqueries = []
-
-    for sq in subqueries:
-        key = sq.strip().lower()
-        if key and key not in seen:
-            seen.add(key)
-            final_subqueries.append(sq.strip())
-
-    return final_subqueries
-
-
-def distance_to_similarity(distance):
-    """
-    Convert Chroma distance to a rough similarity score.
-    Smaller distance = better match.
-    """
-    if distance is None:
-        return 0.0
-    return 1.0 / (1.0 + distance)
-
-
-def deduplicate_results(results, text_prefix_len=160):
-    seen = set()
-    unique = []
-
-    for item in results:
-        text = item["text"].strip()
-        key = text[:text_prefix_len].lower()
-
-        if key not in seen:
-            seen.add(key)
-            unique.append(item)
-
-    return unique
-
-
-def retrieve_for_single_query(query, fetch_k=DEFAULT_FETCH_K, source_filter=None):
-    expanded_query = expand_query(query)
-    query_embedding = model.encode([expanded_query])[0]
-
-    query_kwargs = {
-        "query_embeddings": [query_embedding],
-        "n_results": fetch_k,
-        "include": ["documents", "metadatas", "distances"],
-    }
-
-    if source_filter is not None:
-        if isinstance(source_filter, str):
-            query_kwargs["where"] = {"source": source_filter}
-        elif isinstance(source_filter, dict):
-            query_kwargs["where"] = source_filter
-
-    results = collection.query(**query_kwargs)
-
-    documents = results.get("documents", [[]])
-    metadatas = results.get("metadatas", [[]])
-    distances = results.get("distances", [[]])
-
-    if not documents or not documents[0]:
-        return []
-
-    docs = documents[0]
-    metas = metadatas[0] if metadatas and metadatas[0] else [{} for _ in docs]
-    dists = distances[0] if distances and distances[0] else [None for _ in docs]
-
-    scored_results = []
-    for doc, meta, dist in zip(docs, metas, dists):
-        sim = distance_to_similarity(dist)
-        scored_results.append({
-            "text": doc,
-            "metadata": meta,
-            "distance": dist,
-            "similarity": sim,
-            "source_query": query
-        })
-
-    return scored_results
-
-
-def merge_and_rerank_results(all_results, original_query, top_k=DEFAULT_TOP_K, min_similarity=MIN_SIMILARITY):
-    """
-    Merge multi-query results conservatively.
-
-    Ranking logic:
-    - best similarity is primary signal
-    - tiny bonus if seen in multiple subqueries
-    - tiny bonus if retrieved by original query
-    """
-    if not all_results:
-        return []
-
-    grouped = {}
-
-    for item in all_results:
-        text_key = item["text"].strip().lower()
-
-        if text_key not in grouped:
-            grouped[text_key] = {
-                "text": item["text"],
-                "metadata": item["metadata"],
-                "best_similarity": item["similarity"],
-                "best_distance": item["distance"],
-                "matched_queries": {item["source_query"]}
-            }
-        else:
-            grouped[text_key]["best_similarity"] = max(
-                grouped[text_key]["best_similarity"],
-                item["similarity"]
-            )
-
-            current_best_distance = grouped[text_key]["best_distance"]
-            new_distance = item["distance"]
-
-            if current_best_distance is None:
-                grouped[text_key]["best_distance"] = new_distance
-            elif new_distance is not None:
-                grouped[text_key]["best_distance"] = min(current_best_distance, new_distance)
-
-            grouped[text_key]["matched_queries"].add(item["source_query"])
-
-    merged = []
-    for _, item in grouped.items():
-        multi_query_bonus = 0.01 * (len(item["matched_queries"]) - 1)
-        original_query_bonus = 0.02 if original_query in item["matched_queries"] else 0.0
-        final_score = item["best_similarity"] + multi_query_bonus + original_query_bonus
-
-        merged.append({
-            "text": item["text"],
-            "metadata": item["metadata"],
-            "distance": item["best_distance"],
-            "similarity": item["best_similarity"],
-            "matched_queries": sorted(item["matched_queries"]),
-            "query_match_count": len(item["matched_queries"]),
-            "final_score": final_score
-        })
-
-    merged = deduplicate_results(merged)
-    merged = [item for item in merged if item["similarity"] >= min_similarity]
-    merged.sort(key=lambda x: x["final_score"], reverse=True)
-
-    return merged[:top_k]
 
 
 def retrieve(
-    query,
-    top_k=DEFAULT_TOP_K,
-    fetch_k=DEFAULT_FETCH_K,
-    min_similarity=MIN_SIMILARITY,
-    source_filter=None,
-    verbose=False,
-    return_metadata=False,
+    query: str,
+    top_k: int | None = None,
+    verbose: bool = False,
+    return_metadata: bool = False,
 ):
     """
-    Conservative multi-query retrieval.
+    Backward-compatible retrieval entry point.
 
-    For simple questions:
-    - effectively behaves close to the earlier strong baseline
+    Existing generator code can continue calling:
 
-    For a few clear multi-part question types:
-    - adds 1–2 focused subqueries
+        retrieve("your query")
     """
-    subqueries = decompose_query(query)
 
-    if verbose:
-        print("Querying vector DB...")
-        print(f"Collection size: {collection.count()}")
-        print(f"Original query: {query}")
-        print(f"Subqueries ({len(subqueries)}):")
-        for i, sq in enumerate(subqueries, 1):
-            print(f"  {i}. {sq}")
-        print(f"Top K: {top_k}")
-        print(f"Fetch K per query: {fetch_k}")
-        print(f"Min similarity: {min_similarity}")
-        if source_filter is not None:
-            print(f"Source filter: {source_filter}")
-
-    all_results = []
-    for sq in subqueries:
-        sub_results = retrieve_for_single_query(
-            sq,
-            fetch_k=fetch_k,
-            source_filter=source_filter
+    if _retriever is None:
+        raise RuntimeError(
+            "Retriever has not been configured. "
+            "Call configure_retriever(...) during startup."
         )
-        all_results.extend(sub_results)
 
-    final_results = merge_and_rerank_results(
-        all_results,
-        original_query=query,
+    return _retriever.retrieve(
+        query=query,
         top_k=top_k,
-        min_similarity=min_similarity
+        verbose=verbose,
+        return_metadata=return_metadata,
     )
-
-    if verbose:
-        if not final_results:
-            print("\nNo chunks passed final filtering.")
-        else:
-            print("\nFinal merged + reranked results:")
-            for i, item in enumerate(final_results, 1):
-                preview = item["text"][:240].replace("\n", " ")
-                print(f"\nRank {i}")
-                print(f"Final score: {item['final_score']:.4f}")
-                print(f"Similarity: {item['similarity']:.4f}")
-                print(f"Distance: {item['distance']}")
-                print(f"Matched queries: {item['matched_queries']}")
-                print(f"Metadata: {item['metadata']}")
-                print(f"Text: {preview}...")
-
-    if not final_results:
-        return []
-
-    if return_metadata:
-        return final_results
-
-    return [item["text"] for item in final_results]

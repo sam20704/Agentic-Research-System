@@ -53,7 +53,7 @@ class SentenceTransformerEmbedding:
 
         self._model.max_seq_length = max_seq_length
 
-        dimension = self._model.get_sentence_embedding_dimension()
+        dimension = self._model.get_embedding_dimension() 
 
         if dimension is None:
             raise RuntimeError(
@@ -70,8 +70,11 @@ class SentenceTransformerEmbedding:
     @property
     def dimension(self) -> int:
         """Return the embedding vector dimension."""
-
         return self._dimension
+
+    # ------------------------------------------------------------------
+    # Single text embedding
+    # ------------------------------------------------------------------
 
     def embed_text(self, text: str) -> list[float]:
         """Generate an embedding for a single text."""
@@ -95,6 +98,22 @@ class SentenceTransformerEmbedding:
         self._validate_vector(vector)
 
         return vector.tolist()
+
+    # ------------------------------------------------------------------
+    # Phase 2.4 Compatibility Method
+    # ------------------------------------------------------------------
+
+    def embed_query(self, query: str) -> list[float]:
+        """Generate an embedding for a search query.
+
+        HybridRetriever expects an `embed_query()` method, so this simply
+        delegates to `embed_text()`.
+        """
+        return self.embed_text(query)
+
+    # ------------------------------------------------------------------
+    # Batch text embeddings
+    # ------------------------------------------------------------------
 
     def embed_texts(
         self,
@@ -159,6 +178,10 @@ class SentenceTransformerEmbedding:
 
         return matrix.tolist()
 
+    # ------------------------------------------------------------------
+    # DocumentChunk embeddings
+    # ------------------------------------------------------------------
+
     def embed_chunks(
         self,
         chunks: Sequence[DocumentChunk],
@@ -173,6 +196,10 @@ class SentenceTransformerEmbedding:
             [chunk.text for chunk in chunks],
             batch_size=batch_size,
         )
+
+    # ------------------------------------------------------------------
+    # Validation
+    # ------------------------------------------------------------------
 
     def _validate_vector(self, vector: np.ndarray) -> None:
         """Validate a single embedding vector."""
@@ -204,3 +231,4 @@ class SentenceTransformerEmbedding:
                 raise RuntimeError(
                     "Normalized embedding does not have unit norm"
                 )
+

@@ -6,3 +6,5 @@ venv*/
 *.log
 notebooks/.ipynb_checkpoints/
 chroma_db/chroma.sqlite3
+digest.txt
+rm .DS_Store

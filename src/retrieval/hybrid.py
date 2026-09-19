@@ -1,0 +1,99 @@
+"""Hybrid sparse + dense retrieval with Reciprocal Rank Fusion."""
+
+from __future__ import annotations
+
+from src.retrieval.embeddings.sentence_transformer import (
+    SentenceTransformerEmbedding,
+)
+from src.retrieval.fusion import ReciprocalRankFusion
+from src.retrieval.models import RetrievalResult
+from src.retrieval.sparse.bm25 import BM25Retriever
+from src.retrieval.vectorstore import QdrantVectorStore
+
+
+class DenseRetriever:
+    """Semantic retriever backed by Qdrant."""
+
+    def __init__(
+        self,
+        vectorstore: QdrantVectorStore,
+        embedder: SentenceTransformerEmbedding,
+    ) -> None:
+        self.vectorstore = vectorstore
+        self.embedder = embedder
+
+    def retrieve(
+        self,
+        query: str,
+        top_k: int = 20,
+    ) -> list[RetrievalResult]:
+        """Retrieve semantic matches from Qdrant."""
+
+        query_vector = self.embedder.embed_query(query)
+
+        return self.vectorstore.search(
+            query_vector=query_vector,
+            top_k=top_k,
+        )
+
+
+class HybridRetriever:
+    """Hybrid BM25 + dense retrieval using Reciprocal Rank Fusion."""
+
+    def __init__(
+        self,
+        bm25_retriever: BM25Retriever,
+        vectorstore: QdrantVectorStore | None,
+        embedder: SentenceTransformerEmbedding | None,
+        fusion: ReciprocalRankFusion | None = None,
+        dense_retriever: DenseRetriever | None = None,
+        fusion_k: int = 60,
+    ) -> None:
+        self.bm25 = bm25_retriever
+
+        # Allow dependency injection for unit tests.
+        if dense_retriever is not None:
+            self.dense = dense_retriever
+        else:
+            if vectorstore is None or embedder is None:
+                raise ValueError(
+                    "vectorstore and embedder are required when "
+                    "dense_retriever is not provided."
+                )
+
+            self.dense = DenseRetriever(
+                vectorstore=vectorstore,
+                embedder=embedder,
+            )
+
+        # Allow injecting a fake/custom fusion implementation in tests.
+        self.fusion = (
+            fusion
+            if fusion is not None
+            else ReciprocalRankFusion(k=fusion_k)
+        )
+
+    def retrieve(
+        self,
+        query: str,
+        bm25_top_k: int = 20,
+        dense_top_k: int = 20,
+        final_top_k: int = 10,
+    ) -> list[RetrievalResult]:
+        """Run BM25 retrieval, dense retrieval, then fuse the rankings."""
+
+        bm25_results = self.bm25.search(
+            query=query,
+            top_k=bm25_top_k,
+        )
+
+        dense_results = self.dense.retrieve(
+            query=query,
+            top_k=dense_top_k,
+        )
+
+        return self.fusion.fuse(
+            bm25_results,
+            dense_results,
+            top_k=final_top_k,
+        )
