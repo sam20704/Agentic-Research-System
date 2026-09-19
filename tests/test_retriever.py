@@ -17,6 +17,7 @@ class FakeVectorStore:
             source="policy.pdf",
             metadata={},
         )
+
         return [
             RetrievalResult(
                 chunk=chunk,
@@ -37,6 +38,7 @@ class FakeBM25:
             source="policy.pdf",
             metadata={},
         )
+
         return [
             RetrievalResult(
                 chunk=chunk,
@@ -55,6 +57,28 @@ def test_retriever_returns_results():
     )
 
     results = retrieve("What is semiconductor policy in India?")
+
+    assert isinstance(results, list)
+    assert len(results) == 1
+
+
+def test_retriever_accepts_top_k_none():
+    """
+    Regression test for backward compatibility.
+
+    Legacy callers may pass top_k=None.
+    """
+
+    configure_retriever(
+        bm25_retriever=FakeBM25(),
+        vectorstore=FakeVectorStore(),
+        embedder=FakeEmbedder(),
+    )
+
+    results = retrieve(
+        "What is semiconductor policy in India?",
+        top_k=None,
+    )
 
     assert isinstance(results, list)
     assert len(results) == 1
