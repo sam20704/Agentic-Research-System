@@ -18,7 +18,7 @@ from qdrant_client.models import (
 )
 
 from src.document.models import BoundingBox
-from src.retrieval.models import DocumentChunk
+from src.retrieval.models import DocumentChunk, RetrievalResult
 
 
 class QdrantVectorStore:
@@ -251,6 +251,54 @@ class QdrantVectorStore:
             for record in records
         ]
 
+    # ------------------------------------------------------------------
+    # Phase 2.4: Dense Semantic Search
+    # ------------------------------------------------------------------
+
+    def search(
+        self,
+        query_vector: Sequence[float],
+        top_k: int = 20,
+    ) -> list[RetrievalResult]:
+        """Perform dense semantic retrieval using cosine similarity."""
+
+        if top_k < 1:
+            raise ValueError("top_k must be >= 1")
+
+        if len(query_vector) != self.vector_size:
+            raise ValueError(
+                f"Query vector dimension {len(query_vector)} "
+                f"does not match vector size {self.vector_size}"
+            )
+
+        response = self.client.query_points(
+            collection_name=self.collection_name,
+            query=list(query_vector),
+            limit=top_k,
+            with_payload=True,
+        )
+
+        results: list[RetrievalResult] = []
+
+        for rank, hit in enumerate(response.points, start=1):
+
+            chunk = self._payload_to_chunk(hit.payload or {})
+
+            results.append(
+                RetrievalResult(
+                    chunk=chunk,
+                    score=float(hit.score),
+                    rank=rank,
+                    retrieval_method="dense",
+                )
+            )
+
+        return results
+
+    # ------------------------------------------------------------------
+    # Utility Methods
+    # ------------------------------------------------------------------
+
     def delete_document(self, document_id: str) -> None:
         """Delete every chunk belonging to a document."""
 
@@ -263,9 +311,7 @@ class QdrantVectorStore:
                 must=[
                     FieldCondition(
                         key="document_id",
-                        match=MatchValue(
-                            value=document_id
-                        ),
+                        match=MatchValue(value=document_id),
                     )
                 ]
             ),
