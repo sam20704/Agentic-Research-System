@@ -1,9 +1,10 @@
-"""Backward-compatible RAG retriever adapter (Phase 2.4).
+"""Backward-compatible RAG retriever adapter (Phase 3.1).
 
 The canonical retrieval implementation lives in src/retrieval/hybrid.py.
 
 This module preserves the existing retrieve() API while delegating all
-retrieval logic to HybridRetriever.
+retrieval logic to HybridRetriever and introducing an optional
+Query Complexity Router for ColBERT augmentation.
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ from src.retrieval.embeddings.sentence_transformer import (
     SentenceTransformerEmbedding,
 )
 from src.retrieval.hybrid import HybridRetriever
+from src.retrieval.router import QueryComplexityRouter
 from src.retrieval.sparse.bm25 import BM25Retriever
 from src.retrieval.vectorstore import QdrantVectorStore
 
@@ -33,13 +35,15 @@ class RAGRetriever:
     """
     Thin compatibility adapter around HybridRetriever.
 
-    Phase 2.4 canonical retrieval flow:
+    Phase 3.1 canonical retrieval flow:
 
         Query
           ↓
-      HybridRetriever
+    Query Complexity Router
           ↓
-    BM25 + Dense + RRF
+    BM25 + Dense (+ Optional ColBERT)
+          ↓
+            RRF
           ↓
     RetrievalResult[]
     """
@@ -54,6 +58,8 @@ class RAGRetriever:
     ) -> None:
         self.bm25_top_k = bm25_top_k
         self.dense_top_k = dense_top_k
+
+        self.router = QueryComplexityRouter()
 
         self.retriever = HybridRetriever(
             bm25_retriever=bm25_retriever,
@@ -70,6 +76,9 @@ class RAGRetriever:
     ):
         """
         Delegate retrieval to the canonical HybridRetriever.
+
+        Phase 3.1 adds automatic routing for complex queries so that
+        ColBERT can augment the hybrid retrieval pipeline when available.
         """
 
         if not query or not query.strip():
@@ -78,18 +87,26 @@ class RAGRetriever:
         # Preserve legacy behavior where callers may pass top_k=None.
         top_k = top_k or DEFAULT_TOP_K
 
+        # --------------------------------------------------------------
+        # Phase 3.1 Query Router
+        # --------------------------------------------------------------
+        decision = self.router.route(query)
+
         results = self.retriever.retrieve(
             query=query,
             bm25_top_k=self.bm25_top_k,
             dense_top_k=self.dense_top_k,
             final_top_k=top_k,
+            use_colbert=decision.is_complex,
         )
 
         if verbose:
             print("=" * 60)
             print("HYBRID RETRIEVAL")
             print("=" * 60)
-            print(f"Query : {query}")
+            print(f"Query           : {query}")
+            print(f"Router Decision : {decision.reason}")
+            print(f"Use ColBERT     : {decision.is_complex}")
             print()
 
             for result in results:
