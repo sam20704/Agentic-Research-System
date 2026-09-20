@@ -1,3 +1,4 @@
+
 """ColBERT late-interaction retriever."""
 
 from __future__ import annotations
@@ -10,11 +11,10 @@ from src.retrieval.models import DocumentChunk, RetrievalResult
 
 class ColBERTRetriever:
     """
-    ColBERT retriever using token-level late interaction.
+    ColBERT late-interaction retriever.
 
-    This implementation is additive to the existing Phase 2 retrieval
-    pipeline and returns RetrievalResult objects compatible with BM25,
-    dense retrieval, RRF, and reranking.
+    Supports dependency injection for unit tests while using the real
+    ColBERT encoder/index in integration tests.
     """
 
     def __init__(
@@ -22,22 +22,27 @@ class ColBERTRetriever:
         config: ColBERTConfig | None = None,
         encoder: ColBERTEncoder | None = None,
         index: ColBERTIndex | None = None,
-    ):
+    ) -> None:
         self.config = config or ColBERTConfig()
+
+        # Allow fake encoder/index injection for unit tests.
         self.encoder = encoder or ColBERTEncoder(self.config)
-        self.index = index or ColBERTIndex(self.encoder, self.config)
+        self.index = index or ColBERTIndex(self.encoder)
 
     # ------------------------------------------------------------------
-    # Index management
+    # Indexing
     # ------------------------------------------------------------------
 
-    def build_index(self, chunks: list[DocumentChunk]) -> None:
-        """Build the ColBERT index from document chunks."""
+    def build_index(
+        self,
+        chunks: list[DocumentChunk],
+    ) -> None:
+        """Encode and index document chunks."""
         self.index.build(chunks)
 
     def index_size(self) -> int:
         """Return number of indexed chunks."""
-        return self.index.count()
+        return self.index.size()
 
     # ------------------------------------------------------------------
     # Retrieval
@@ -49,14 +54,14 @@ class ColBERTRetriever:
         top_k: int | None = None,
     ) -> list[RetrievalResult]:
         """
-        Retrieve ranked evidence using ColBERT MaxSim scoring.
+        Retrieve top-k document chunks using late interaction.
         """
-
         if not query or not query.strip():
-            raise ValueError("query must not be empty")
+            raise ValueError("query must not be empty.")
 
         top_k = top_k or self.config.default_top_k
 
+        # Let the index encode the query (keeps one canonical interface).
         return self.index.search(
             query=query,
             top_k=top_k,

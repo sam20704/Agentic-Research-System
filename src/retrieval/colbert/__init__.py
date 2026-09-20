@@ -1,15 +1,21 @@
-
 """ColBERT late-interaction retrieval package."""
-"""Public API for ColBERT retrieval."""
 
 from .config import ColBERTConfig
 from .encoder import ColBERTEncoder
 from .index import ColBERTIndex
 from .retriever import ColBERTRetriever
 
+# Router now lives in src/retrieval/router
+from src.retrieval.router import (
+    QueryComplexityRouter,
+    QueryRoutingDecision,
+)
+
 __all__ = [
     "ColBERTConfig",
     "ColBERTEncoder",
     "ColBERTIndex",
     "ColBERTRetriever",
+    "QueryComplexityRouter",
+    "QueryRoutingDecision",
 ]

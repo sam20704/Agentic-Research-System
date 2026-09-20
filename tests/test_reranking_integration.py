@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+import torch
 
 from src.retrieval.models import DocumentChunk, RetrievalResult
 from src.retrieval.reranking.cross_encoder import CrossEncoderReranker
@@ -39,7 +40,15 @@ def _make_candidate(
 
 @pytest.fixture(scope="module")
 def qwen_reranker() -> CrossEncoderReranker:
-    """Load the real Qwen reranker once for the integration module."""
+    """
+    Load the real Qwen reranker once for the integration module.
+
+    These integration tests are intended for CUDA-enabled machines.
+    On CPU-only or Apple Silicon (MPS) environments, skip the module.
+    """
+    if not torch.cuda.is_available():
+        pytest.skip("CUDA is not available on this machine.")
+
     return CrossEncoderReranker(
         device="cuda",
         max_length=2048,
