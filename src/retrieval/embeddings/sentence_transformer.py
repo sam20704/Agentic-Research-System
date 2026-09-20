@@ -53,7 +53,7 @@ class SentenceTransformerEmbedding:
 
         self._model.max_seq_length = max_seq_length
 
-        dimension = self._model.get_embedding_dimension() 
+        dimension = self._model.get_sentence_embedding_dimension()
 
         if dimension is None:
             raise RuntimeError(
