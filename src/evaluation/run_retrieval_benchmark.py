@@ -33,6 +33,7 @@ from pathlib import Path
 from typing import Any
 
 import psutil
+import torch
 
 from src.document.models import BoundingBox
 from src.evaluation.retrieval_benchmark import (
@@ -41,7 +42,7 @@ from src.evaluation.retrieval_benchmark import (
     RetrievalBenchmarkSummary,
     load_cases,
     save_results,
-    save_summary,
+    save_summaries,
 )
 from src.retrieval.colbert import ColBERTConfig, ColBERTRetriever
 from src.retrieval.embeddings.sentence_transformer import (
@@ -245,7 +246,12 @@ def validate_ground_truth(
 
 def build_bge_retriever(
     chunks: list[DocumentChunk],
-) -> tuple[DenseRetriever, QdrantVectorStore, SentenceTransformerEmbedding]:
+) -> tuple[
+    DenseRetriever,
+    QdrantVectorStore,
+    SentenceTransformerEmbedding,
+    float,
+]:
     """Build the BGE-M3 dense-only retriever."""
 
     print()
@@ -256,6 +262,8 @@ def build_bge_retriever(
     embedder = SentenceTransformerEmbedding(
         model_name=BGE_MODEL,
     )
+
+    index_start = time.perf_counter()
 
     vectors = embedder.embed_chunks(chunks)
 
@@ -298,10 +306,15 @@ def build_bge_retriever(
         embedder=embedder,
     )
 
-    print(f"  Dimension : {dimension}")
-    print(f"  Indexed   : {count}")
+    indexing_time_ms = (
+        time.perf_counter() - index_start
+    ) * 1000.0
 
-    return retriever, store, embedder
+    print(f"  Dimension     : {dimension}")
+    print(f"  Indexed       : {count}")
+    print(f"  Indexing time : {indexing_time_ms:.2f} ms")
+
+    return retriever, store, embedder, indexing_time_ms
 
 
 # ---------------------------------------------------------------------------
@@ -311,7 +324,7 @@ def build_bge_retriever(
 
 def build_colbert_retriever(
     chunks: list[DocumentChunk],
-) -> ColBERTRetriever:
+) -> tuple[ColBERTRetriever, float]:
     """Build the standalone ColBERT index."""
 
     print()
@@ -327,7 +340,11 @@ def build_colbert_retriever(
         config=config,
     )
 
+    index_start = time.perf_counter()
     retriever.build_index(chunks)
+    indexing_time_ms = (
+        time.perf_counter() - index_start
+    ) * 1000.0
 
     count = retriever.index_size()
 
@@ -338,9 +355,10 @@ def build_colbert_retriever(
             f"found {count}."
         )
 
-    print(f"  Indexed : {count}")
+    print(f"  Indexed       : {count}")
+    print(f"  Indexing time : {indexing_time_ms:.2f} ms")
 
-    return retriever
+    return retriever, indexing_time_ms
 
 
 # ---------------------------------------------------------------------------
@@ -444,6 +462,9 @@ def benchmark_method(
 
     process = psutil.Process(os.getpid())
 
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+
     results: list[RetrievalBenchmarkResult] = []
 
     for index, case in enumerate(cases, start=1):
@@ -460,9 +481,16 @@ def benchmark_method(
             time.perf_counter() - before
         ) * 1000.0
 
-        memory_mb = (
+        host_memory_mb = (
             process.memory_info().rss
             / (1024 * 1024)
+        )
+
+        gpu_memory_mb = (
+            torch.cuda.max_memory_allocated()
+            / (1024 * 1024)
+            if torch.cuda.is_available()
+            else 0.0
         )
 
         result = RetrievalBenchmarkResult(
@@ -499,7 +527,8 @@ def benchmark_method(
             ),
 
             latency_ms=elapsed_ms,
-            memory_mb=memory_mb,
+            memory_mb=host_memory_mb,
+            gpu_memory_mb=gpu_memory_mb,
         )
 
         results.append(result)
@@ -524,6 +553,8 @@ def benchmark_method(
 def build_summary(
     method: str,
     results: list[RetrievalBenchmarkResult],
+    *,
+    indexing_time_ms: float,
 ) -> RetrievalBenchmarkSummary:
     """Build aggregate summary for one retrieval method."""
 
@@ -532,16 +563,31 @@ def build_summary(
         for result in results
     ]
 
-    memories = [
+    host_memories = [
         result.memory_mb
         for result in results
     ]
 
-    peak_memory_mb = max(memories) if memories else 0.0
+    gpu_memories = [
+        result.gpu_memory_mb
+        for result in results
+    ]
+
+    peak_memory_mb = (
+        max(host_memories)
+        if host_memories
+        else 0.0
+    )
 
     memory_delta_mb = (
-        max(memories) - min(memories)
-        if memories
+        max(host_memories) - min(host_memories)
+        if host_memories
+        else 0.0
+    )
+
+    peak_gpu_memory_mb = (
+        max(gpu_memories)
+        if gpu_memories
         else 0.0
     )
 
@@ -580,6 +626,8 @@ def build_summary(
 
         peak_memory_mb=peak_memory_mb,
         memory_delta_mb=memory_delta_mb,
+        peak_gpu_memory_mb=peak_gpu_memory_mb,
+        indexing_time_ms=indexing_time_ms,
     )
 
 
@@ -609,11 +657,15 @@ def save_benchmark_metadata(
             {
                 "name": "bge-m3",
                 "model": BGE_MODEL,
+                "device": "auto",
+                "batch_size": 32,
                 "retrieval_type": "dense-only",
             },
             {
                 "name": "colbert",
                 "model": COLBERT_MODEL,
+                "device": "auto",
+                "batch_size": ColBERTConfig().batch_size,
                 "retrieval_type": "late-interaction",
             },
         ],
@@ -676,14 +728,22 @@ def main() -> None:
     print()
     print("[4/7] Building BGE-M3 dense-only index...")
 
-    bge, bge_store, bge_embedder = build_bge_retriever(
+    (
+        bge,
+        bge_store,
+        bge_embedder,
+        bge_indexing_time_ms,
+    ) = build_bge_retriever(
         chunks
     )
 
     print()
     print("[5/7] Building ColBERT-only index...")
 
-    colbert = build_colbert_retriever(
+    (
+        colbert,
+        colbert_indexing_time_ms,
+    ) = build_colbert_retriever(
         chunks
     )
 
@@ -717,10 +777,12 @@ def main() -> None:
         build_summary(
             "bge-m3",
             bge_results,
+            indexing_time_ms=bge_indexing_time_ms,
         ),
         build_summary(
             "colbert",
             colbert_results,
+            indexing_time_ms=colbert_indexing_time_ms,
         ),
     ]
 
@@ -752,7 +814,7 @@ def main() -> None:
         all_results,
     )
 
-    save_summary(
+    save_summaries(
         summary_path,
         summaries,
     )
@@ -789,6 +851,18 @@ def main() -> None:
         print(
             f"  Median latency: "
             f"{summary.median_latency_ms:.2f} ms"
+        )
+        print(
+            f"  Indexing time : "
+            f"{summary.indexing_time_ms:.2f} ms"
+        )
+        print(
+            f"  Host memory   : "
+            f"{summary.peak_memory_mb:.2f} MB"
+        )
+        print(
+            f"  GPU memory    : "
+            f"{summary.peak_gpu_memory_mb:.2f} MB"
         )
     print()
     print(f"Results : {results_path}")

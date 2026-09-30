@@ -115,7 +115,7 @@ class RetrievalBenchmarkResult:
 
     latency_ms: float
     memory_mb: float = 0.0
-
+    gpu_memory_mb: float = 0.0
 
 
 
@@ -136,6 +136,8 @@ class RetrievalBenchmarkSummary:
 
     peak_memory_mb: float
     memory_delta_mb: float
+    peak_gpu_memory_mb: float = 0.0
+    indexing_time_ms: float = 0.0
 
 
 class RetrievalBenchmark:

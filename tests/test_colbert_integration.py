@@ -1,5 +1,7 @@
 """Integration tests for real ColBERT-v2 retrieval."""
 
+import os
+
 import pytest
 import torch
 
@@ -27,6 +29,7 @@ def make_chunk(
         text=text,
         page_numbers=(page,),
         source="policy.pdf",
+        section="Policy",
         bounding_boxes=(
             BoundingBox(
                 x0=10,
@@ -39,7 +42,7 @@ def make_chunk(
             f"{chunk_id}-element",
         ),
         metadata={
-            "section": "Policy",
+            "fixture": "colbert-integration",
         },
     )
 
@@ -49,7 +52,19 @@ def make_chunk(
 # ---------------------------------------------------------------------
 
 
+RUN_PHASE3_COLBERT_INTEGRATION_TESTS = (
+    os.getenv("RUN_PHASE3_COLBERT_INTEGRATION_TESTS") == "1"
+)
+
+
 @pytest.mark.integration
+@pytest.mark.skipif(
+    not RUN_PHASE3_COLBERT_INTEGRATION_TESTS,
+    reason=(
+        "Set RUN_PHASE3_COLBERT_INTEGRATION_TESTS=1 "
+        "to run the real ColBERT model integration test"
+    ),
+)
 def test_colbert_retriever_end_to_end():
     retriever = ColBERTRetriever(
         config=ColBERTConfig(
@@ -156,14 +171,15 @@ def test_colbert_retriever_end_to_end():
     assert result.chunk.document_id == "doc1"
     assert result.chunk.page_numbers == (1,)
     assert result.chunk.source == "policy.pdf"
+    assert result.chunk.section == "Policy"
 
     assert result.chunk.element_ids == (
         "chunk1-element",
     )
 
     assert result.chunk.metadata[
-        "section"
-    ] == "Policy"
+        "fixture"
+    ] == "colbert-integration"
 
     assert result.chunk.metadata[
         "retrieval_sources"

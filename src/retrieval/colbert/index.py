@@ -211,6 +211,7 @@ class ColBERTIndex:
                 text=indexed.chunk.text,
                 page_numbers=indexed.chunk.page_numbers,
                 source=indexed.chunk.source,
+                section=indexed.chunk.section,
                 bounding_boxes=indexed.chunk.bounding_boxes,
                 element_ids=indexed.chunk.element_ids,
                 metadata=metadata,

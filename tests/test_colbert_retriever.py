@@ -1,9 +1,9 @@
-
 """Unit tests for the independent Phase 3.1 ColBERT retriever."""
 
 import pytest
 import torch
 
+from src.document.models import BoundingBox
 from src.retrieval.colbert.config import ColBERTConfig
 from src.retrieval.colbert.index import ColBERTIndex
 from src.retrieval.colbert.retriever import ColBERTRetriever
@@ -125,7 +125,17 @@ def make_chunk(
         text=text,
         page_numbers=(page,),
         source="policy.pdf",
-        metadata={"section": "Policy"},
+        section="Policy",
+        bounding_boxes=(
+            BoundingBox(
+                x0=1,
+                y0=2,
+                x1=3,
+                y1=4,
+            ),
+        ),
+        element_ids=(f"{chunk_id}-element",),
+        metadata={"source_label": "fixture"},
     )
 
 
@@ -242,6 +252,12 @@ def test_non_positive_top_k_raises_value_error():
             top_k=0,
         )
 
+    with pytest.raises(ValueError):
+        retriever.retrieve(
+            "semiconductor",
+            top_k=-1,
+        )
+
 
 def test_provenance_is_preserved():
     retriever = make_retriever()
@@ -254,10 +270,22 @@ def test_provenance_is_preserved():
     assert result.chunk.document_id == "doc1"
     assert result.chunk.page_numbers == (1,)
     assert result.chunk.source == "policy.pdf"
+    assert result.chunk.section == "Policy"
+    assert result.chunk.bounding_boxes == (
+        BoundingBox(
+            x0=1,
+            y0=2,
+            x1=3,
+            y1=4,
+        ),
+    )
+    assert result.chunk.element_ids == (
+        "chunk1-element",
+    )
 
     assert result.chunk.metadata[
-        "section"
-    ] == "Policy"
+        "source_label"
+    ] == "fixture"
 
     assert result.chunk.metadata[
         "retrieval_sources"
@@ -375,3 +403,68 @@ def test_duplicate_chunk_ids_are_rejected():
         retriever.build_index(
             duplicate_chunks
         )
+
+
+def test_top_k_equal_one_returns_one_result():
+    retriever = make_retriever()
+
+    results = retriever.retrieve(
+        "semiconductor",
+        top_k=1,
+    )
+
+    assert len(results) == 1
+    assert results[0].rank == 1
+
+
+def test_top_k_equal_index_size_returns_all_results():
+    retriever = make_retriever()
+
+    results = retriever.retrieve(
+        "semiconductor",
+        top_k=3,
+    )
+
+    assert len(results) == 3
+    assert [result.rank for result in results] == [1, 2, 3]
+
+
+def test_top_k_larger_than_index_returns_all_results():
+    retriever = make_retriever()
+
+    results = retriever.retrieve(
+        "semiconductor",
+        top_k=100,
+    )
+
+    assert len(results) == retriever.index_size()
+    assert [result.rank for result in results] == [1, 2, 3]
+
+
+def test_empty_chunk_list_clears_index():
+    retriever = make_retriever()
+
+    retriever.build_index([])
+
+    assert retriever.index_size() == 0
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"model_name": ""},
+        {"model_name": "   "},
+        {"batch_size": 0},
+        {"batch_size": -1},
+        {"max_query_length": 0},
+        {"max_query_length": -1},
+        {"max_document_length": 0},
+        {"max_document_length": -1},
+        {"default_top_k": 0},
+        {"default_top_k": -1},
+        {"device": "invalid-device"},
+    ],
+)
+def test_invalid_colbert_configuration_is_rejected(kwargs):
+    with pytest.raises(ValueError):
+        ColBERTConfig(**kwargs)
