@@ -1,3 +1,6 @@
+
+"""Unit tests for the independent Phase 3.1 ColBERT retriever."""
+
 import pytest
 import torch
 
@@ -7,12 +10,15 @@ from src.retrieval.colbert.retriever import ColBERTRetriever
 from src.retrieval.models import DocumentChunk
 
 
-# ------------------------------------------------------------------
-# Fake deterministic encoder (no model download)
-# ------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# Fake deterministic encoder
+# ---------------------------------------------------------------------
+
 
 class FakeColBERTEncoder:
-    def __init__(self):
+    """Deterministic encoder used without model downloads."""
+
+    def __init__(self) -> None:
         self.config = ColBERTConfig(device="cpu")
 
     def encode_documents(self, texts):
@@ -20,44 +26,99 @@ class FakeColBERTEncoder:
         masks = []
 
         for text in texts:
-            if "semiconductor" in text.lower():
-                emb = torch.tensor([[1.0, 0.0], [0.8, 0.0]])
-            elif "vehicle" in text.lower():
-                emb = torch.tensor([[0.0, 1.0], [0.0, 0.8]])
-            else:
-                emb = torch.tensor([[0.5, 0.5], [0.5, 0.5]])
+            lowered = text.lower()
 
-            embeddings.append(emb)
-            masks.append(torch.tensor([1, 1]))
+            if "semiconductor" in lowered:
+                embedding = torch.tensor(
+                    [
+                        [1.0, 0.0],
+                        [0.8, 0.0],
+                    ]
+                )
+            elif "vehicle" in lowered:
+                embedding = torch.tensor(
+                    [
+                        [0.0, 1.0],
+                        [0.0, 0.8],
+                    ]
+                )
+            else:
+                embedding = torch.tensor(
+                    [
+                        [0.5, 0.5],
+                        [0.5, 0.5],
+                    ]
+                )
+
+            embeddings.append(embedding)
+            masks.append(
+                torch.tensor(
+                    [True, True],
+                    dtype=torch.bool,
+                )
+            )
 
         return embeddings, masks
 
     def encode_query(self, query):
-        if "semiconductor" in query.lower():
-            emb = torch.tensor([[1.0, 0.0]])
-        elif "vehicle" in query.lower():
-            emb = torch.tensor([[0.0, 1.0]])
+        lowered = query.lower()
+
+        if "semiconductor" in lowered:
+            embedding = torch.tensor(
+                [[1.0, 0.0]]
+            )
+        elif "vehicle" in lowered:
+            embedding = torch.tensor(
+                [[0.0, 1.0]]
+            )
         else:
-            emb = torch.tensor([[0.5, 0.5]])
+            embedding = torch.tensor(
+                [[0.5, 0.5]]
+            )
 
-        return emb, torch.tensor([1])
+        return (
+            embedding,
+            torch.tensor(
+                [True],
+                dtype=torch.bool,
+            ),
+        )
 
+    @staticmethod
     def maxsim_score(
-        self,
         query_embeddings,
         query_mask,
         document_embeddings,
         document_mask,
     ):
-        scores = torch.matmul(query_embeddings, document_embeddings.T)
-        return scores.max(dim=1).values.sum()
+        query_tokens = query_embeddings[
+            query_mask.bool()
+        ]
+
+        document_tokens = document_embeddings[
+            document_mask.bool()
+        ]
+
+        scores = torch.matmul(
+            query_tokens,
+            document_tokens.T,
+        )
+
+        return scores.max(
+            dim=1
+        ).values.sum()
 
 
-# ------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # Helpers
-# ------------------------------------------------------------------
+# ---------------------------------------------------------------------
 
-def make_chunk(chunk_id, text, page):
+
+def make_chunk(
+    chunk_id: str,
+    text: str,
+    page: int,
+) -> DocumentChunk:
     return DocumentChunk(
         chunk_id=chunk_id,
         document_id="doc1",
@@ -68,9 +129,13 @@ def make_chunk(chunk_id, text, page):
     )
 
 
-def make_retriever():
+def make_retriever() -> ColBERTRetriever:
     encoder = FakeColBERTEncoder()
-    index = ColBERTIndex(encoder)
+
+    index = ColBERTIndex(
+        encoder=encoder,
+        config=encoder.config,
+    )
 
     retriever = ColBERTRetriever(
         config=encoder.config,
@@ -101,19 +166,23 @@ def make_retriever():
     return retriever
 
 
-# ------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # Unit tests
-# ------------------------------------------------------------------
+# ---------------------------------------------------------------------
+
 
 def test_build_index_counts_chunks():
     retriever = make_retriever()
+
     assert retriever.index_size() == 3
 
 
 def test_semiconductor_query_ranks_correct_chunk_first():
     retriever = make_retriever()
 
-    results = retriever.retrieve("semiconductor policy")
+    results = retriever.retrieve(
+        "semiconductor policy"
+    )
 
     assert results[0].chunk.chunk_id == "chunk1"
     assert results[0].retrieval_method == "colbert"
@@ -122,7 +191,9 @@ def test_semiconductor_query_ranks_correct_chunk_first():
 def test_vehicle_query_ranks_correct_chunk_first():
     retriever = make_retriever()
 
-    results = retriever.retrieve("electric vehicle incentives")
+    results = retriever.retrieve(
+        "electric vehicle incentives"
+    )
 
     assert results[0].chunk.chunk_id == "chunk2"
 
@@ -130,20 +201,29 @@ def test_vehicle_query_ranks_correct_chunk_first():
 def test_top_k_limits_results():
     retriever = make_retriever()
 
-    results = retriever.retrieve("policy", top_k=2)
+    results = retriever.retrieve(
+        "policy",
+        top_k=2,
+    )
 
     assert len(results) == 2
 
 
 def test_empty_index_returns_empty_results():
     encoder = FakeColBERTEncoder()
+
     retriever = ColBERTRetriever(
         config=encoder.config,
         encoder=encoder,
-        index=ColBERTIndex(encoder),
+        index=ColBERTIndex(
+            encoder=encoder,
+            config=encoder.config,
+        ),
     )
 
-    assert retriever.retrieve("semiconductor") == []
+    assert retriever.retrieve(
+        "semiconductor"
+    ) == []
 
 
 def test_empty_query_raises_value_error():
@@ -153,25 +233,145 @@ def test_empty_query_raises_value_error():
         retriever.retrieve("")
 
 
+def test_non_positive_top_k_raises_value_error():
+    retriever = make_retriever()
+
+    with pytest.raises(ValueError):
+        retriever.retrieve(
+            "semiconductor",
+            top_k=0,
+        )
+
+
 def test_provenance_is_preserved():
     retriever = make_retriever()
 
-    result = retriever.retrieve("semiconductor")[0]
+    result = retriever.retrieve(
+        "semiconductor"
+    )[0]
 
+    assert result.chunk.chunk_id == "chunk1"
     assert result.chunk.document_id == "doc1"
     assert result.chunk.page_numbers == (1,)
     assert result.chunk.source == "policy.pdf"
-    assert result.chunk.metadata["section"] == "Policy"
-    assert result.chunk.metadata["retrieval_sources"] == ["colbert"]
+
+    assert result.chunk.metadata[
+        "section"
+    ] == "Policy"
+
+    assert result.chunk.metadata[
+        "retrieval_sources"
+    ] == ["colbert"]
+
     assert "colbert_score" in result.chunk.metadata
 
 
 def test_deterministic_ranking():
     retriever = make_retriever()
 
-    first = retriever.retrieve("semiconductor")
-    second = retriever.retrieve("semiconductor")
+    first = retriever.retrieve(
+        "semiconductor"
+    )
 
-    assert [r.chunk.chunk_id for r in first] == [
-        r.chunk.chunk_id for r in second
+    second = retriever.retrieve(
+        "semiconductor"
+    )
+
+    assert [
+        result.chunk.chunk_id
+        for result in first
+    ] == [
+        result.chunk.chunk_id
+        for result in second
     ]
+
+
+def test_index_build_is_deterministic_regardless_of_input_order():
+    encoder_a = FakeColBERTEncoder()
+    encoder_b = FakeColBERTEncoder()
+
+    retriever_a = ColBERTRetriever(
+        config=encoder_a.config,
+        encoder=encoder_a,
+        index=ColBERTIndex(
+            encoder=encoder_a,
+            config=encoder_a.config,
+        ),
+    )
+
+    retriever_b = ColBERTRetriever(
+        config=encoder_b.config,
+        encoder=encoder_b,
+        index=ColBERTIndex(
+            encoder=encoder_b,
+            config=encoder_b.config,
+        ),
+    )
+
+    chunks = [
+        make_chunk(
+            "chunk2",
+            "Electric vehicle adoption incentives.",
+            2,
+        ),
+        make_chunk(
+            "chunk1",
+            "India semiconductor policy incentives.",
+            1,
+        ),
+        make_chunk(
+            "chunk3",
+            "Generic manufacturing report.",
+            5,
+        ),
+    ]
+
+    retriever_a.build_index(chunks)
+    retriever_b.build_index(list(reversed(chunks)))
+
+    first = retriever_a.retrieve(
+        "semiconductor"
+    )
+
+    second = retriever_b.retrieve(
+        "semiconductor"
+    )
+
+    assert [
+        result.chunk.chunk_id
+        for result in first
+    ] == [
+        result.chunk.chunk_id
+        for result in second
+    ]
+
+
+def test_duplicate_chunk_ids_are_rejected():
+    encoder = FakeColBERTEncoder()
+
+    retriever = ColBERTRetriever(
+        config=encoder.config,
+        encoder=encoder,
+        index=ColBERTIndex(
+            encoder=encoder,
+            config=encoder.config,
+        ),
+    )
+
+    duplicate_chunks = [
+        make_chunk(
+            "chunk1",
+            "India semiconductor policy.",
+            1,
+        ),
+        make_chunk(
+            "chunk1",
+            "Another document chunk.",
+            2,
+        ),
+    ]
+
+    with pytest.raises(ValueError):
+        retriever.build_index(
+            duplicate_chunks
+        )

@@ -1,0 +1,308 @@
+[
+  {
+    "query_id": 1,
+    "query": "Summarize the key objectives of India's semiconductor fab policy.",
+    "relevant_chunk_ids": [
+      "doc_1ffa006e3d49dd33:chunk:1:85dee483ad497cce",
+      "doc_377437ef6ab479aa:chunk:196:1d6c28f6724f3670",
+      "doc_9bc5fa187999ae29:chunk:0:1c579c1a46592dd3",
+      "doc_9bc5fa187999ae29:chunk:19:06fface5a9b26513",
+      "doc_9bc5fa187999ae29:chunk:24:21403e6f8019220b",
+      "doc_9bc5fa187999ae29:chunk:41:b0ddb8dcafd5b105",
+      "doc_9bc5fa187999ae29:chunk:4:0b63c1af755d0632",
+      "doc_eed3724d21f8808c:chunk:13:2be1d4f2ce2a6bf7"
+    ]
+  },
+  {
+    "query_id": 2,
+    "query": "What financial incentives are provided for semiconductor fabs in India?",
+    "relevant_chunk_ids": [
+      "doc_1ffa006e3d49dd33:chunk:15:845765cc2b085fd2",
+      "doc_1ffa006e3d49dd33:chunk:59:06b3f2681a2adf11",
+      "doc_1ffa006e3d49dd33:chunk:61:ffd8b0f5f7c84044",
+      "doc_377437ef6ab479aa:chunk:100:634e5488e3407f63",
+      "doc_377437ef6ab479aa:chunk:102:52e465d03b2d7bed",
+      "doc_377437ef6ab479aa:chunk:178:9329a29ffe9b3948",
+      "doc_377437ef6ab479aa:chunk:201:24747ac570b88a57",
+      "doc_377437ef6ab479aa:chunk:97:2ae45d74de5d6c8f",
+      "doc_377437ef6ab479aa:chunk:99:ae4dcde465f0ee21",
+      "doc_9bc5fa187999ae29:chunk:17:f173779c2b549a3f",
+      "doc_9bc5fa187999ae29:chunk:19:06fface5a9b26513",
+      "doc_9bc5fa187999ae29:chunk:4:0b63c1af755d0632"
+    ]
+  },
+  {
+    "query_id": 3,
+    "query": "What are the main goals of the FAME II scheme?",
+    "relevant_chunk_ids": [
+      "doc_058fe43eb2b521a4:chunk:182:b47da2c7e751177c",
+      "doc_058fe43eb2b521a4:chunk:189:9c4fc542855e0139",
+      "doc_058fe43eb2b521a4:chunk:3:96a67c3b9bdeb3eb",
+      "doc_058fe43eb2b521a4:chunk:64:e79608450fa4b296",
+      "doc_058fe43eb2b521a4:chunk:65:cd0d7de5899c9c5d",
+      "doc_058fe43eb2b521a4:chunk:66:57d7d2e3eb477c11",
+      "doc_058fe43eb2b521a4:chunk:67:59cb4a30f98ae6f4",
+      "doc_058fe43eb2b521a4:chunk:73:7bfe58fe2512df51"
+    ]
+  },
+  {
+    "query_id": 4,
+    "query": "What are the key components of the semiconductor value chain?",
+    "relevant_chunk_ids": [
+      "doc_377437ef6ab479aa:chunk:24:210a59e23ca379f2",
+      "doc_377437ef6ab479aa:chunk:62:7c93918a86334d94",
+      "doc_377437ef6ab479aa:chunk:63:030c3773443f17f4",
+      "doc_377437ef6ab479aa:chunk:65:447e9f244f976331",
+      "doc_377437ef6ab479aa:chunk:67:cbac111353c55b01",
+      "doc_9bc5fa187999ae29:chunk:16:9eede34f20788c32",
+      "doc_9bc5fa187999ae29:chunk:2:983d8a5aba048d9f",
+      "doc_eed3724d21f8808c:chunk:59:22f32b9d540b9533"
+    ]
+  },
+  {
+    "query_id": 5,
+    "query": "What is the role of semiconductors in modern digital economies?",
+    "relevant_chunk_ids": [
+      "doc_1ffa006e3d49dd33:chunk:0:116e2eb13bb2286e",
+      "doc_377437ef6ab479aa:chunk:25:0f2de4fb5df73ed8",
+      "doc_377437ef6ab479aa:chunk:26:864f7bf7fff00938",
+      "doc_377437ef6ab479aa:chunk:29:20f8cf7989ff8754",
+      "doc_377437ef6ab479aa:chunk:33:4822d991e2122319",
+      "doc_9bc5fa187999ae29:chunk:25:29afbb5b9e4eeba4",
+      "doc_9bc5fa187999ae29:chunk:2:983d8a5aba048d9f",
+      "doc_9bc5fa187999ae29:chunk:32:57a72ca52319e130",
+      "doc_9bc5fa187999ae29:chunk:35:55dd4acaa1ecb40b",
+      "doc_9bc5fa187999ae29:chunk:40:fd11acd920218aed",
+      "doc_eed3724d21f8808c:chunk:68:39eab0c3f0d44f4e",
+      "doc_eed3724d21f8808c:chunk:85:c93e71bff42f7220"
+    ]
+  },
+  {
+    "query_id": 6,
+    "query": "Compare semiconductor policy approaches in India and Taiwan.",
+    "relevant_chunk_ids": [
+      "doc_1ffa006e3d49dd33:chunk:24:ec73cc278ad1899c",
+      "doc_377437ef6ab479aa:chunk:170:cb9f3a7af8098f07",
+      "doc_377437ef6ab479aa:chunk:17:3482dff43d35e496",
+      "doc_377437ef6ab479aa:chunk:1:8d774ac5625b1170",
+      "doc_377437ef6ab479aa:chunk:217:4db3f2c6300c0543",
+      "doc_377437ef6ab479aa:chunk:23:05fc0e87342a7e9e",
+      "doc_377437ef6ab479aa:chunk:67:cbac111353c55b01",
+      "doc_377437ef6ab479aa:chunk:91:c523c4458a78330c",
+      "doc_9bc5fa187999ae29:chunk:17:f173779c2b549a3f",
+      "doc_eed3724d21f8808c:chunk:0:9735c9857a6123bf",
+      "doc_eed3724d21f8808c:chunk:13:2be1d4f2ce2a6bf7",
+      "doc_eed3724d21f8808c:chunk:53:7b5939071b779e8e",
+      "doc_eed3724d21f8808c:chunk:54:2e636574d7eefa67"
+    ]
+  },
+  {
+    "query_id": 7,
+    "query": "What challenges does India face in semiconductor manufacturing?",
+    "relevant_chunk_ids": [
+      "doc_377437ef6ab479aa:chunk:147:9fdae360acb7362d",
+      "doc_377437ef6ab479aa:chunk:148:fc209873d5745995",
+      "doc_377437ef6ab479aa:chunk:162:634d7ac8f224cd05",
+      "doc_377437ef6ab479aa:chunk:23:05fc0e87342a7e9e",
+      "doc_377437ef6ab479aa:chunk:5:9929515b7e557bc8",
+      "doc_377437ef6ab479aa:chunk:79:adff42c0e58d9e87"
+    ]
+  },
+  {
+    "query_id": 8,
+    "query": "How does FAME II support EV adoption in India?",
+    "relevant_chunk_ids": [
+      "doc_058fe43eb2b521a4:chunk:136:f622c197ef853884",
+      "doc_058fe43eb2b521a4:chunk:188:e1b716086d603ddd",
+      "doc_058fe43eb2b521a4:chunk:189:9c4fc542855e0139",
+      "doc_058fe43eb2b521a4:chunk:3:96a67c3b9bdeb3eb",
+      "doc_058fe43eb2b521a4:chunk:64:e79608450fa4b296",
+      "doc_058fe43eb2b521a4:chunk:67:59cb4a30f98ae6f4",
+      "doc_058fe43eb2b521a4:chunk:73:7bfe58fe2512df51",
+      "doc_3fdad50b4105bb6e:chunk:116:a6175ea828fe2d06"
+    ]
+  },
+  {
+    "query_id": 9,
+    "query": "Compare EV adoption trends in India with global trends.",
+    "relevant_chunk_ids": [
+      "doc_058fe43eb2b521a4:chunk:15:a8aa020820428518",
+      "doc_058fe43eb2b521a4:chunk:188:e1b716086d603ddd",
+      "doc_058fe43eb2b521a4:chunk:3:96a67c3b9bdeb3eb",
+      "doc_058fe43eb2b521a4:chunk:64:e79608450fa4b296",
+      "doc_058fe43eb2b521a4:chunk:86:1a7e8d9dbb3a1ee8",
+      "doc_377437ef6ab479aa:chunk:257:237b522a70be92de",
+      "doc_3fdad50b4105bb6e:chunk:0:9135155b41f0d868",
+      "doc_3fdad50b4105bb6e:chunk:116:a6175ea828fe2d06",
+      "doc_3fdad50b4105bb6e:chunk:117:7be6ee73968c2d49",
+      "doc_3fdad50b4105bb6e:chunk:130:ee91777203e5125f",
+      "doc_3fdad50b4105bb6e:chunk:75:e53acac9352e547a"
+    ]
+  },
+  {
+    "query_id": 10,
+    "query": "What role do state policies like Uttar Pradesh’s semiconductor policy play in the ecosystem?",
+    "relevant_chunk_ids": [
+      "doc_1ffa006e3d49dd33:chunk:2:8c20d194602af1e5",
+      "doc_1ffa006e3d49dd33:chunk:34:eea6cfa493508fee",
+      "doc_1ffa006e3d49dd33:chunk:3:b6312f61f3a32159",
+      "doc_1ffa006e3d49dd33:chunk:56:5eaf111a9cc4ff80",
+      "doc_377437ef6ab479aa:chunk:102:52e465d03b2d7bed",
+      "doc_377437ef6ab479aa:chunk:196:1d6c28f6724f3670",
+      "doc_377437ef6ab479aa:chunk:201:24747ac570b88a57",
+      "doc_cafe8ccc50347d27:chunk:8:052f13c60bac2380"
+    ]
+  },
+  {
+    "query_id": 16,
+    "query": "What are the latest developments under India Semiconductor Mission 2.0?",
+    "relevant_chunk_ids": [
+      "doc_1ffa006e3d49dd33:chunk:1:85dee483ad497cce",
+      "doc_1ffa006e3d49dd33:chunk:55:4accb8b12739ddf8",
+      "doc_377437ef6ab479aa:chunk:317:c6df9a8b584c3a88",
+      "doc_9bc5fa187999ae29:chunk:0:1c579c1a46592dd3",
+      "doc_9bc5fa187999ae29:chunk:1:44824a68ee8c525d",
+      "doc_9bc5fa187999ae29:chunk:2:983d8a5aba048d9f",
+      "doc_9bc5fa187999ae29:chunk:40:fd11acd920218aed",
+      "doc_9bc5fa187999ae29:chunk:41:b0ddb8dcafd5b105",
+      "doc_eed3724d21f8808c:chunk:53:7b5939071b779e8e"
+    ]
+  },
+  {
+    "query_id": 17,
+    "query": "How are global EV supply chains evolving due to geopolitical tensions?",
+    "relevant_chunk_ids": [
+      "doc_3fdad50b4105bb6e:chunk:272:ce96e8e70215ecf5",
+      "doc_3fdad50b4105bb6e:chunk:337:88890019d4b76ac5",
+      "doc_3fdad50b4105bb6e:chunk:350:e933a5afbf069df8",
+      "doc_3fdad50b4105bb6e:chunk:392:afca192a4801ccca",
+      "doc_3fdad50b4105bb6e:chunk:3:b57807f3a2f395c3",
+      "doc_3fdad50b4105bb6e:chunk:400:a9c90885351fc39f",
+      "doc_3fdad50b4105bb6e:chunk:407:02b25c72baf7d336",
+      "doc_3fdad50b4105bb6e:chunk:408:cbc8a8e160a17439",
+      "doc_3fdad50b4105bb6e:chunk:409:9799c00bfc2f24e4",
+      "doc_3fdad50b4105bb6e:chunk:412:a16b3194b45cc6bd",
+      "doc_3fdad50b4105bb6e:chunk:67:d86d4e0c077e8759",
+      "doc_3fdad50b4105bb6e:chunk:6:725d094da6822e0d"
+    ]
+  },
+  {
+    "query_id": 18,
+    "query": "What are the global trends in semiconductor supply chain diversification?",
+    "relevant_chunk_ids": [
+      "doc_377437ef6ab479aa:chunk:218:391babd8fbae7c97",
+      "doc_377437ef6ab479aa:chunk:219:f418557aee91da88",
+      "doc_3fdad50b4105bb6e:chunk:329:0f26e59705a53f46",
+      "doc_3fdad50b4105bb6e:chunk:70:9808157f436602a7",
+      "doc_9bc5fa187999ae29:chunk:16:9eede34f20788c32",
+      "doc_9bc5fa187999ae29:chunk:26:97bfdd9eeecf8324",
+      "doc_9bc5fa187999ae29:chunk:27:8cb99066cfae78da",
+      "doc_eed3724d21f8808c:chunk:10:ef3d452c50331d9f",
+      "doc_eed3724d21f8808c:chunk:66:aeafde4e545fb706",
+      "doc_eed3724d21f8808c:chunk:68:39eab0c3f0d44f4e"
+    ]
+  },
+  {
+    "query_id": 19,
+    "query": "How do government incentives influence EV adoption globally?",
+    "relevant_chunk_ids": [
+      "doc_058fe43eb2b521a4:chunk:184:81d3ff2cddeec0d4",
+      "doc_058fe43eb2b521a4:chunk:3:96a67c3b9bdeb3eb",
+      "doc_058fe43eb2b521a4:chunk:64:e79608450fa4b296",
+      "doc_3fdad50b4105bb6e:chunk:106:bf7e281ceb2203d9",
+      "doc_3fdad50b4105bb6e:chunk:116:a6175ea828fe2d06",
+      "doc_3fdad50b4105bb6e:chunk:117:7be6ee73968c2d49",
+      "doc_3fdad50b4105bb6e:chunk:385:1862797971c64e8c",
+      "doc_3fdad50b4105bb6e:chunk:5:df06954ad46b0a03",
+      "doc_3fdad50b4105bb6e:chunk:60:0bbf10dc2f00d0e2",
+      "doc_cafe8ccc50347d27:chunk:42:40641645146f0622",
+      "doc_cafe8ccc50347d27:chunk:5:637ddcf726532cf6",
+      "doc_cafe8ccc50347d27:chunk:8:052f13c60bac2380"
+    ]
+  },
+  {
+    "query_id": 20,
+    "query": "What role do critical minerals play in EV supply chains?",
+    "relevant_chunk_ids": [
+      "doc_3fdad50b4105bb6e:chunk:178:8e7beac8cca18b0f",
+      "doc_3fdad50b4105bb6e:chunk:215:81d1e6daef40f551",
+      "doc_3fdad50b4105bb6e:chunk:2:20bc24be089a5480",
+      "doc_3fdad50b4105bb6e:chunk:322:334d28daa9ba88d9",
+      "doc_3fdad50b4105bb6e:chunk:382:d4c61c2d5f3e036a"
+    ]
+  },
+  {
+    "query_id": 21,
+    "query": "Analyze how semiconductor policy and EV policy together impact industrial growth in India.",
+    "relevant_chunk_ids": [
+      "doc_377437ef6ab479aa:chunk:34:8fcec8556edc402e",
+      "doc_377437ef6ab479aa:chunk:48:7b30f60db2d5261a",
+      "doc_377437ef6ab479aa:chunk:91:c523c4458a78330c",
+      "doc_377437ef6ab479aa:chunk:97:2ae45d74de5d6c8f",
+      "doc_3fdad50b4105bb6e:chunk:454:95c5886da9c79c4e",
+      "doc_9bc5fa187999ae29:chunk:2:983d8a5aba048d9f"
+    ]
+  },
+  {
+    "query_id": 22,
+    "query": "Evaluate the effectiveness of India's semiconductor incentives compared to global policies.",
+    "relevant_chunk_ids": [
+      "doc_1ffa006e3d49dd33:chunk:1:85dee483ad497cce",
+      "doc_377437ef6ab479aa:chunk:0:e4f3cc74f4fb5b3a",
+      "doc_377437ef6ab479aa:chunk:101:30c0fd8ef6223fa5",
+      "doc_377437ef6ab479aa:chunk:102:52e465d03b2d7bed",
+      "doc_377437ef6ab479aa:chunk:103:983b6ab0b48046b8",
+      "doc_377437ef6ab479aa:chunk:106:d1f9fc9a9a973a09",
+      "doc_377437ef6ab479aa:chunk:1:8d774ac5625b1170",
+      "doc_377437ef6ab479aa:chunk:201:24747ac570b88a57",
+      "doc_377437ef6ab479aa:chunk:217:4db3f2c6300c0543",
+      "doc_377437ef6ab479aa:chunk:28:272f815a8de3d638",
+      "doc_377437ef6ab479aa:chunk:2:8a12058bb429aaa6",
+      "doc_377437ef6ab479aa:chunk:91:c523c4458a78330c",
+      "doc_9bc5fa187999ae29:chunk:17:f173779c2b549a3f",
+      "doc_eed3724d21f8808c:chunk:114:0ab1ffbfea474551",
+      "doc_eed3724d21f8808c:chunk:53:7b5939071b779e8e"
+    ]
+  },
+  {
+    "query_id": 23,
+    "query": "What are the major risks in global semiconductor and EV supply chains?",
+    "relevant_chunk_ids": [
+      "doc_3fdad50b4105bb6e:chunk:272:ce96e8e70215ecf5",
+      "doc_3fdad50b4105bb6e:chunk:293:4a582af5309fe01c",
+      "doc_3fdad50b4105bb6e:chunk:2:20bc24be089a5480",
+      "doc_3fdad50b4105bb6e:chunk:329:0f26e59705a53f46",
+      "doc_3fdad50b4105bb6e:chunk:3:b57807f3a2f395c3",
+      "doc_3fdad50b4105bb6e:chunk:67:d86d4e0c077e8759",
+      "doc_9bc5fa187999ae29:chunk:26:97bfdd9eeecf8324"
+    ]
+  },
+  {
+    "query_id": 24,
+    "query": "Predict the future of India's semiconductor ecosystem based on current policies.",
+    "relevant_chunk_ids": [
+      "doc_377437ef6ab479aa:chunk:100:634e5488e3407f63",
+      "doc_377437ef6ab479aa:chunk:201:24747ac570b88a57",
+      "doc_377437ef6ab479aa:chunk:40:5f40190459026e7d",
+      "doc_377437ef6ab479aa:chunk:97:2ae45d74de5d6c8f",
+      "doc_9bc5fa187999ae29:chunk:17:f173779c2b549a3f",
+      "doc_9bc5fa187999ae29:chunk:18:ce999e105ef583b4",
+      "doc_9bc5fa187999ae29:chunk:2:983d8a5aba048d9f",
+      "doc_9bc5fa187999ae29:chunk:31:2ad49fb110bec472",
+      "doc_9bc5fa187999ae29:chunk:3:c269ed27528f5ac8",
+      "doc_9bc5fa187999ae29:chunk:5:a4b2b0f72b82f560"
+    ]
+  },
+  {
+    "query_id": 25,
+    "query": "Identify contradictions between policy goals and real-world EV or semiconductor adoption trends.",
+    "relevant_chunk_ids": [
+      "doc_058fe43eb2b521a4:chunk:183:399e158dba1ee71b",
+      "doc_3fdad50b4105bb6e:chunk:104:770a00f3b9827381",
+      "doc_3fdad50b4105bb6e:chunk:106:bf7e281ceb2203d9",
+      "doc_3fdad50b4105bb6e:chunk:408:cbc8a8e160a17439",
+      "doc_3fdad50b4105bb6e:chunk:417:522a09a045a2cb50",
+      "doc_eed3724d21f8808c:chunk:10:ef3d452c50331d9f"
+    ]
+  }
+]

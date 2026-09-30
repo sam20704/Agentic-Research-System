@@ -9,7 +9,13 @@ from src.retrieval.models import DocumentChunk, RetrievalResult
 from src.retrieval.reranking.cross_encoder import CrossEncoderReranker
 
 
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(
+        not torch.cuda.is_available(),
+        reason="CUDA is required for Qwen reranker integration tests.",
+    ),
+]
 
 
 def _make_candidate(
@@ -40,15 +46,7 @@ def _make_candidate(
 
 @pytest.fixture(scope="module")
 def qwen_reranker() -> CrossEncoderReranker:
-    """
-    Load the real Qwen reranker once for the integration module.
-
-    These integration tests are intended for CUDA-enabled machines.
-    On CPU-only or Apple Silicon (MPS) environments, skip the module.
-    """
-    if not torch.cuda.is_available():
-        pytest.skip("CUDA is not available on this machine.")
-
+    """Load the real Qwen reranker once for the integration module."""
     return CrossEncoderReranker(
         device="cuda",
         max_length=2048,
@@ -207,6 +205,8 @@ def test_qwen_reranker_assigns_valid_final_ranks(
             "Global semiconductor supply chain policy.",
             rank=3,
             score=0.10,
+
+
         ),
     ]
 

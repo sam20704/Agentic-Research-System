@@ -1,35 +1,41 @@
+
+"""ColBERT-v2 encoder wrapper for Phase 3.1."""
+
 from __future__ import annotations
 
 from typing import Sequence
 
 import torch
-from transformers import AutoModel, AutoTokenizer
+from sentence_transformers import MultiVectorEncoder
 
 from src.retrieval.colbert.config import ColBERTConfig
 
 
 class ColBERTEncoder:
     """
-    Wrapper around the ColBERT model.
+    Wrapper around Sentence Transformers MultiVectorEncoder.
 
-    Separates query encoding and document encoding while sharing
-    the underlying tokenizer/model instance.
+    The encoder is intentionally independent from BM25, BGE-M3,
+    Qdrant, RRF, reranking, and query routing.
+
+    The underlying MultiVectorEncoder handles the ColBERT-v2
+    representation, including:
+
+    - query/document asymmetric encoding
+    - token-level projection
+    - token normalization
+    - scoring-token masking
+    - variable-length multi-vector outputs
     """
 
     def __init__(self, config: ColBERTConfig | None = None) -> None:
         self.config = config or ColBERTConfig()
-
         self.device = self._resolve_device(self.config.device)
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
+        self.model = MultiVectorEncoder(
             self.config.model_name,
-            trust_remote_code=True,
+            device=str(self.device),
         )
-
-        self.model = AutoModel.from_pretrained(
-            self.config.model_name,
-            trust_remote_code=True,
-        ).to(self.device)
 
         self.model.eval()
 
@@ -46,6 +52,18 @@ class ColBERTEncoder:
 
             return torch.device("cpu")
 
+        if device == "cuda" and not torch.cuda.is_available():
+            raise RuntimeError(
+                "ColBERT device='cuda' was requested, "
+                "but CUDA is not available."
+            )
+
+        if device == "mps" and not torch.backends.mps.is_available():
+            raise RuntimeError(
+                "ColBERT device='mps' was requested, "
+                "but MPS is not available."
+            )
+
         return torch.device(device)
 
     # ------------------------------------------------------------------
@@ -57,36 +75,45 @@ class ColBERTEncoder:
         query: str,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """
-        Encode a single query.
+        Encode one query using the checkpoint's query-side recipe.
 
         Returns
         -------
-        tuple(torch.Tensor, torch.Tensor)
-            (token_embeddings, attention_mask)
+        tuple[Tensor, Tensor]
+            Token embeddings and an all-valid scoring mask.
+
+        MultiVectorEncoder already applies the model's scoring mask
+        and returns only tokens that participate in late interaction.
         """
 
         if not query or not query.strip():
             raise ValueError("query must not be empty.")
 
-        encoded = self.tokenizer(
+        embeddings = self.model.encode_query(
             query,
-            return_tensors="pt",
-            truncation=True,
-            max_length=self.config.max_query_length,
+            batch_size=1,
+            show_progress_bar=False,
+            convert_to_numpy=False,
         )
 
-        encoded = {
-            key: value.to(self.device)
-            for key, value in encoded.items()
-        }
+        if isinstance(embeddings, list):
+            if len(embeddings) != 1:
+                raise RuntimeError(
+                    "Expected exactly one query embedding."
+                )
 
-        with torch.inference_mode():
-            outputs = self.model(**encoded)
+            token_embeddings = embeddings[0]
+        else:
+            token_embeddings = embeddings
 
-        token_embeddings = outputs.last_hidden_state.squeeze(0).cpu()
-        attention_mask = encoded["attention_mask"].squeeze(0).cpu()
+        token_embeddings = token_embeddings.detach().cpu()
 
-        return token_embeddings, attention_mask
+        mask = torch.ones(
+            token_embeddings.shape[0],
+            dtype=torch.bool,
+        )
+
+        return token_embeddings, mask
 
     # ------------------------------------------------------------------
     # Document encoding
@@ -97,58 +124,41 @@ class ColBERTEncoder:
         documents: Sequence[str],
     ) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
         """
-        Encode multiple documents.
+        Encode documents using the checkpoint's document-side recipe.
 
-        Returns
-        -------
-        tuple(list[Tensor], list[Tensor])
-            (document_embeddings, attention_masks)
-
-        Each list contains one entry per document.
+        The underlying model applies its document length and scoring
+        mask. Outputs are variable-length token matrices.
         """
 
         if not documents:
             return [], []
 
-        embeddings: list[torch.Tensor] = []
+        embeddings = self.model.encode_document(
+            list(documents),
+            batch_size=self.config.batch_size,
+            show_progress_bar=False,
+            convert_to_numpy=False,
+        )
+
+        if not isinstance(embeddings, list):
+            embeddings = [embeddings]
+
+        token_embeddings: list[torch.Tensor] = []
         masks: list[torch.Tensor] = []
 
-        for start in range(
-            0,
-            len(documents),
-            self.config.batch_size,
-        ):
-            batch = documents[start : start + self.config.batch_size]
+        for embedding in embeddings:
+            tensor = embedding.detach().cpu()
 
-            encoded = self.tokenizer(
-                list(batch),
-                return_tensors="pt",
-                padding=True,
-                truncation=True,
-                max_length=self.config.max_document_length,
+            token_embeddings.append(tensor)
+
+            masks.append(
+                torch.ones(
+                    tensor.shape[0],
+                    dtype=torch.bool,
+                )
             )
 
-            encoded = {
-                key: value.to(self.device)
-                for key, value in encoded.items()
-            }
-
-            with torch.inference_mode():
-                outputs = self.model(**encoded)
-
-            hidden_states = outputs.last_hidden_state.cpu()
-            attention_masks = encoded["attention_mask"].cpu()
-
-            # One embedding tensor + one mask per document.
-            for hidden, mask in zip(
-                hidden_states,
-                attention_masks,
-                strict=True,
-            ):
-                embeddings.append(hidden)
-                masks.append(mask)
-
-        return embeddings, masks
+        return token_embeddings, masks
 
     # ------------------------------------------------------------------
     # Late interaction scoring
@@ -162,23 +172,39 @@ class ColBERTEncoder:
         document_mask: torch.Tensor,
     ) -> float:
         """
-        ColBERT MaxSim score.
+        Compute ColBERT MaxSim.
 
-        Computes maximum similarity between each valid query token
-        and all valid document tokens, then sums across query tokens.
+        For every valid query token, the maximum cosine similarity
+        against document tokens is selected and the resulting values
+        are summed across query tokens.
         """
 
-        query_tokens = query_embeddings[query_mask.bool()]
-        document_tokens = document_embeddings[document_mask.bool()]
+        query_tokens = query_embeddings[
+            query_mask.bool()
+        ]
+
+        document_tokens = document_embeddings[
+            document_mask.bool()
+        ]
+
+        if query_tokens.numel() == 0:
+            return 0.0
+
+        if document_tokens.numel() == 0:
+            return 0.0
 
         similarity = torch.matmul(
             query_tokens,
             document_tokens.T,
         )
 
-        max_per_query = similarity.max(dim=1).values
+        max_per_query = similarity.max(
+            dim=1
+        ).values
 
-        return float(max_per_query.sum().item())
+        return float(
+            max_per_query.sum().item()
+        )
 
     # ------------------------------------------------------------------
     # Metadata
@@ -186,6 +212,28 @@ class ColBERTEncoder:
 
     @property
     def embedding_dimension(self) -> int:
-        """Return token embedding dimension."""
+        """Return the final ColBERT token embedding dimension."""
 
-        return self.model.config.hidden_size
+        # MultiVectorEncoder exposes the ColBERT projection as the
+        # Dense module following the Transformer.
+        #
+        # For colbert-ir/colbertv2.0:
+        #   Transformer: 768
+        #   Dense:       768 -> 128
+        #   Normalize
+        #
+        # Therefore the final token representation is 128-D.
+
+        for module in self.model:
+            out_features = getattr(
+                module,
+                "out_features",
+                None,
+            )
+
+            if out_features is not None:
+                return int(out_features)
+
+        raise RuntimeError(
+            "Unable to determine final ColBERT embedding dimension."
+        )

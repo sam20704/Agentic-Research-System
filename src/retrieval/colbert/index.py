@@ -1,3 +1,5 @@
+"""Deterministic in-memory ColBERT index for Phase 3.1."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -11,7 +13,7 @@ from src.retrieval.models import DocumentChunk, RetrievalResult
 
 @dataclass(frozen=True)
 class ColBERTIndexedChunk:
-    """Token-level ColBERT representation of one chunk."""
+    """Token-level ColBERT representation of one document chunk."""
 
     chunk: DocumentChunk
     token_embeddings: torch.Tensor
@@ -19,7 +21,12 @@ class ColBERTIndexedChunk:
 
 
 class ColBERTIndex:
-    """Deterministic in-memory ColBERT index."""
+    """
+    Deterministic in-memory ColBERT index.
+
+    Phase 3.1 intentionally keeps the index implementation isolated
+    from Qdrant, BM25, RRF, routing, and reranking.
+    """
 
     def __init__(
         self,
@@ -35,43 +42,71 @@ class ColBERTIndex:
     # ------------------------------------------------------------------
 
     def build(self, chunks: list[DocumentChunk]) -> None:
-        """Build a deterministic token-level index."""
+        """
+        Build a deterministic token-level index.
+
+        Chunks are sorted by chunk_id before encoding so index
+        construction does not depend on caller ordering.
+        """
 
         if not chunks:
             self._index = []
             return
 
-        texts = [chunk.text for chunk in chunks]
+        ordered_chunks = sorted(
+            chunks,
+            key=lambda chunk: chunk.chunk_id,
+        )
+
+        chunk_ids = [
+            chunk.chunk_id
+            for chunk in ordered_chunks
+        ]
+
+        if len(chunk_ids) != len(set(chunk_ids)):
+            raise ValueError(
+                "ColBERT index requires unique chunk_id values."
+            )
+
+        texts = [
+            chunk.text
+            for chunk in ordered_chunks
+        ]
 
         encoded = self.encoder.encode_documents(texts)
-
-        # --------------------------------------------------------------
-        # Compatibility with both the real encoder and fake test encoder.
-        #
-        # Real encoder:
-        #     List[Tensor] (one tensor per document)
-        #
-        # Fake encoder:
-        #     (embeddings, masks)
-        # --------------------------------------------------------------
 
         if isinstance(encoded, tuple):
             embeddings, masks = encoded[:2]
         else:
             embeddings = encoded
             masks = [
-                torch.ones(embedding.shape[0], dtype=torch.bool)
+                torch.ones(
+                    embedding.shape[0],
+                    dtype=torch.bool,
+                )
                 for embedding in embeddings
             ]
+
+        if len(embeddings) != len(ordered_chunks):
+            raise RuntimeError(
+                "Number of document embeddings does not match "
+                "number of chunks."
+            )
+
+        if len(masks) != len(ordered_chunks):
+            raise RuntimeError(
+                "Number of document masks does not match "
+                "number of chunks."
+            )
 
         self._index = [
             ColBERTIndexedChunk(
                 chunk=chunk,
-                token_embeddings=embedding.cpu(),
-                attention_mask=mask.cpu(),
+                token_embeddings=embedding.detach().cpu(),
+                attention_mask=mask.detach().cpu(),
             )
             for chunk, embedding, mask in zip(
-                chunks,
+                ordered_chunks,
                 embeddings,
                 masks,
                 strict=True,
@@ -79,10 +114,13 @@ class ColBERTIndex:
         ]
 
     def count(self) -> int:
+        """Return the number of indexed chunks."""
+
         return len(self._index)
 
     def size(self) -> int:
-        """Return number of indexed chunks."""
+        """Return the number of indexed chunks."""
+
         return len(self._index)
 
     # ------------------------------------------------------------------
@@ -97,24 +135,21 @@ class ColBERTIndex:
         """Search indexed chunks using ColBERT MaxSim."""
 
         if not query or not query.strip():
-            raise ValueError("query must not be empty")
+            raise ValueError("query must not be empty.")
 
         if self.count() == 0:
             return []
 
-        top_k = top_k or self.config.default_top_k
+        top_k = (
+            self.config.default_top_k
+            if top_k is None
+            else top_k
+        )
+
+        if top_k <= 0:
+            raise ValueError("top_k must be greater than zero.")
 
         query_encoded = self.encoder.encode_query(query)
-
-        # --------------------------------------------------------------
-        # Compatibility with both real and fake encoders.
-        #
-        # Real encoder:
-        #     Tensor
-        #
-        # Fake encoder:
-        #     (embeddings, mask)
-        # --------------------------------------------------------------
 
         if isinstance(query_encoded, tuple):
             query_embeddings, query_mask = query_encoded[:2]
@@ -125,39 +160,44 @@ class ColBERTIndex:
                 dtype=torch.bool,
             )
 
-        query_embeddings = query_embeddings.cpu()
-        query_mask = query_mask.cpu()
+        query_embeddings = query_embeddings.detach().cpu()
+        query_mask = query_mask.detach().cpu()
 
         scored: list[tuple[float, ColBERTIndexedChunk]] = []
 
         for indexed in self._index:
-            # Fake encoder exposes maxsim_score(); real encoder currently doesn't.
-            if hasattr(self.encoder, "maxsim_score"):
-                score = self.encoder.maxsim_score(
-                    query_embeddings=query_embeddings,
-                    query_mask=query_mask,
-                    document_embeddings=indexed.token_embeddings,
-                    document_mask=indexed.attention_mask,
+            score = self.encoder.maxsim_score(
+                query_embeddings=query_embeddings,
+                query_mask=query_mask,
+                document_embeddings=indexed.token_embeddings,
+                document_mask=indexed.attention_mask,
+            )
+
+            scored.append(
+                (
+                    float(score),
+                    indexed,
                 )
-            else:
-                similarity = torch.matmul(
-                    query_embeddings,
-                    indexed.token_embeddings.T,
-                )
+            )
 
-                max_per_query_token = similarity.max(dim=1).values
-                score = max_per_query_token.sum()
-
-            scored.append((float(score), indexed))
-
+        # Deterministic ordering:
+        #   1. higher ColBERT score
+        #   2. chunk_id lexical order for ties
         scored.sort(
-            key=lambda item: (-item[0], item[1].chunk.chunk_id)
+            key=lambda item: (
+                -item[0],
+                item[1].chunk.chunk_id,
+            )
         )
 
         results: list[RetrievalResult] = []
 
-        for rank, (score, indexed) in enumerate(scored[:top_k], start=1):
+        for rank, (score, indexed) in enumerate(
+            scored[:top_k],
+            start=1,
+        ):
             metadata = dict(indexed.chunk.metadata)
+
             metadata.update(
                 {
                     "colbert_score": score,

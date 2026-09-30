@@ -1,104 +1,38 @@
-
-import pytest
-
-from src.evaluation.retrieval_benchmark import RetrievalBenchmark
-from src.retrieval.models import DocumentChunk, RetrievalResult
+from src.evaluation.retrieval_benchmark import (
+    RetrievalBenchmarkCase,
+)
 
 
-def chunk(chunk_id):
-    return DocumentChunk(
-        chunk_id=chunk_id,
-        document_id="doc1",
-        text="example",
-        page_numbers=(1,),
-        source="policy.pdf",
-        metadata={},
-    )
-
-
-class FakeDenseRetriever:
-    def retrieve(self, query, top_k):
-        return [
-            RetrievalResult(
-                chunk=chunk("chunk1"),
-                score=0.95,
-                rank=1,
-                retrieval_method="dense",
-            ),
-            RetrievalResult(
-                chunk=chunk("chunk2"),
-                score=0.90,
-                rank=2,
-                retrieval_method="dense",
-            ),
-        ]
-
-
-class FakeColBERTRetriever:
-    def retrieve(self, query, top_k):
-        return [
-            RetrievalResult(
-                chunk=chunk("chunk1"),
-                score=5.2,
-                rank=1,
-                retrieval_method="colbert",
-            ),
-            RetrievalResult(
-                chunk=chunk("chunk3"),
-                score=4.8,
-                rank=2,
-                retrieval_method="colbert",
-            ),
-        ]
-
-
-def test_dense_metrics():
-    benchmark = RetrievalBenchmark(
-        FakeDenseRetriever(),
-        FakeColBERTRetriever(),
-    )
-
-    result = benchmark.benchmark_dense(
+def test_benchmark_case_supports_multiple_relevant_chunks():
+    case = RetrievalBenchmarkCase(
+        query_id="1",
         query="semiconductor policy",
-        expected_chunk="chunk1",
+        relevant_chunk_ids=(
+            "chunk-1",
+            "chunk-2",
+        ),
     )
 
-    assert result.method == "bge-m3"
-    assert result.recall_at_5 == 1.0
-    assert result.recall_at_10 == 1.0
-    assert result.mrr == 1.0
-    assert result.latency_ms >= 0
-
-
-def test_colbert_metrics():
-    benchmark = RetrievalBenchmark(
-        FakeDenseRetriever(),
-        FakeColBERTRetriever(),
+    assert case.query_id == "1"
+    assert case.relevant_chunk_ids == (
+        "chunk-1",
+        "chunk-2",
     )
 
-    result = benchmark.benchmark_colbert(
-        query="semiconductor policy",
-        expected_chunk="chunk1",
+
+def test_benchmark_case_from_dict():
+    case = RetrievalBenchmarkCase.from_dict(
+        {
+            "query_id": "1",
+            "query": "semiconductor policy",
+            "relevant_chunk_ids": [
+                "chunk-1",
+                "chunk-2",
+            ],
+        }
     )
 
-    assert result.method == "colbert"
-    assert result.recall_at_5 == 1.0
-    assert result.recall_at_10 == 1.0
-    assert result.mrr == 1.0
-    assert result.latency_ms >= 0
-
-
-def test_missing_chunk_returns_zero_metrics():
-    benchmark = RetrievalBenchmark(
-        FakeDenseRetriever(),
-        FakeColBERTRetriever(),
+    assert case.relevant_chunk_ids == (
+        "chunk-1",
+        "chunk-2"
     )
-
-    result = benchmark.benchmark_colbert(
-        query="unknown query",
-        expected_chunk="missing_chunk",
-    )
-
-    assert result.recall_at_5 == 0.0
-    assert result.recall_at_10 == 0.0
-    assert result.mrr == 0.0

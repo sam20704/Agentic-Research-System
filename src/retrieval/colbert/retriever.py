@@ -1,5 +1,5 @@
 
-"""ColBERT late-interaction retriever."""
+"""Independent ColBERT late-interaction retriever for Phase 3.1."""
 
 from __future__ import annotations
 
@@ -11,10 +11,23 @@ from src.retrieval.models import DocumentChunk, RetrievalResult
 
 class ColBERTRetriever:
     """
-    ColBERT late-interaction retriever.
+    Standalone ColBERT late-interaction retriever.
 
-    Supports dependency injection for unit tests while using the real
-    ColBERT encoder/index in integration tests.
+    Public lifecycle:
+
+        retriever = ColBERTRetriever(...)
+        retriever.build_index(chunks)
+        results = retriever.retrieve(query, top_k=10)
+
+    This class intentionally has no dependency on:
+
+    - BM25
+    - BGE-M3
+    - Qdrant
+    - RRF
+    - reranking
+    - query routing
+    - agent orchestration
     """
 
     def __init__(
@@ -25,9 +38,20 @@ class ColBERTRetriever:
     ) -> None:
         self.config = config or ColBERTConfig()
 
-        # Allow fake encoder/index injection for unit tests.
-        self.encoder = encoder or ColBERTEncoder(self.config)
-        self.index = index or ColBERTIndex(self.encoder)
+        self.encoder = (
+            encoder
+            if encoder is not None
+            else ColBERTEncoder(self.config)
+        )
+
+        self.index = (
+            index
+            if index is not None
+            else ColBERTIndex(
+                encoder=self.encoder,
+                config=self.config,
+            )
+        )
 
     # ------------------------------------------------------------------
     # Indexing
@@ -38,10 +62,12 @@ class ColBERTRetriever:
         chunks: list[DocumentChunk],
     ) -> None:
         """Encode and index document chunks."""
+
         self.index.build(chunks)
 
     def index_size(self) -> int:
-        """Return number of indexed chunks."""
+        """Return the number of indexed chunks."""
+
         return self.index.size()
 
     # ------------------------------------------------------------------
@@ -53,15 +79,20 @@ class ColBERTRetriever:
         query: str,
         top_k: int | None = None,
     ) -> list[RetrievalResult]:
-        """
-        Retrieve top-k document chunks using late interaction.
-        """
+        """Retrieve top-k chunks using ColBERT late interaction."""
+
         if not query or not query.strip():
             raise ValueError("query must not be empty.")
 
-        top_k = top_k or self.config.default_top_k
+        top_k = (
+            self.config.default_top_k
+            if top_k is None
+            else top_k
+        )
 
-        # Let the index encode the query (keeps one canonical interface).
+        if top_k <= 0:
+            raise ValueError("top_k must be greater than zero.")
+
         return self.index.search(
             query=query,
             top_k=top_k,
