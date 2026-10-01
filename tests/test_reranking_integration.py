@@ -3,12 +3,19 @@
 from __future__ import annotations
 
 import pytest
+import torch
 
 from src.retrieval.models import DocumentChunk, RetrievalResult
 from src.retrieval.reranking.cross_encoder import CrossEncoderReranker
 
 
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(
+        not torch.cuda.is_available(),
+        reason="CUDA is required for Qwen reranker integration tests.",
+    ),
+]
 
 
 def _make_candidate(
@@ -198,6 +205,8 @@ def test_qwen_reranker_assigns_valid_final_ranks(
             "Global semiconductor supply chain policy.",
             rank=3,
             score=0.10,
+
+
         ),
     ]
 
