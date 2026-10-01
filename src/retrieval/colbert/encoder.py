@@ -1,5 +1,4 @@
-
-"""ColBERT-v2 encoder wrapper for Phase 3.1."""
+"""ColBERT encoder and late-interaction scoring utilities."""
 
 from __future__ import annotations
 
@@ -7,162 +6,264 @@ from typing import Sequence
 
 import torch
 from sentence_transformers import MultiVectorEncoder
+from sentence_transformers.sentence_transformer.modules import Transformer
 
 from src.retrieval.colbert.config import ColBERTConfig
 
 
 class ColBERTEncoder:
-    """
-    Wrapper around Sentence Transformers MultiVectorEncoder.
+    """Encode queries/documents and compute ColBERT MaxSim scores."""
 
-    The encoder is intentionally independent from BM25, BGE-M3,
-    Qdrant, RRF, reranking, and query routing.
-
-    The underlying MultiVectorEncoder handles the ColBERT-v2
-    representation, including:
-
-    - query/document asymmetric encoding
-    - token-level projection
-    - token normalization
-    - scoring-token masking
-    - variable-length multi-vector outputs
-    """
-
-    def __init__(self, config: ColBERTConfig | None = None) -> None:
-        self.config = config or ColBERTConfig()
-        self.device = self._resolve_device(self.config.device)
+    def __init__(self, config: ColBERTConfig) -> None:
+        self.config = config
+        self.device = self._resolve_device(config.device)
 
         self.model = MultiVectorEncoder(
             self.config.model_name,
             device=str(self.device),
         )
-
         self.model.eval()
+
+        self._apply_length_configuration(
+            self.model,
+            query_length=config.max_query_length,
+            document_length=config.max_document_length,
+        )
 
     @staticmethod
     def _resolve_device(device: str) -> torch.device:
-        """Resolve execution device."""
+        """Resolve and validate the configured execution device."""
 
         if device == "auto":
             if torch.cuda.is_available():
                 return torch.device("cuda")
 
-            if torch.backends.mps.is_available():
+            if (
+                hasattr(torch.backends, "mps")
+                and torch.backends.mps.is_available()
+            ):
                 return torch.device("mps")
 
             return torch.device("cpu")
 
-        if device == "cuda" and not torch.cuda.is_available():
+        if device == "cuda":
+            if not torch.cuda.is_available():
+                raise RuntimeError(
+                    "ColBERT device 'cuda' was requested, "
+                    "but CUDA is unavailable."
+                )
+
+            return torch.device("cuda")
+
+        if device == "mps":
+            if (
+                not hasattr(torch.backends, "mps")
+                or not torch.backends.mps.is_available()
+            ):
+                raise RuntimeError(
+                    "ColBERT device 'mps' was requested, "
+                    "but MPS is unavailable."
+                )
+
+            return torch.device("mps")
+
+        if device == "cpu":
+            return torch.device("cpu")
+
+        raise ValueError(
+            f"Unsupported ColBERT device '{device}'. "
+            "Choose from 'auto', 'cpu', 'cuda', or 'mps'."
+        )
+
+    @staticmethod
+    def _apply_length_configuration(
+        model: MultiVectorEncoder,
+        *,
+        query_length: int,
+        document_length: int,
+    ) -> None:
+        """
+        Apply query/document lengths to the model's Transformer module.
+        """
+
+        transformer_modules = [
+            module
+            for module in model
+            if isinstance(module, Transformer)
+        ]
+
+        if len(transformer_modules) != 1:
             raise RuntimeError(
-                "ColBERT device='cuda' was requested, "
-                "but CUDA is not available."
+                "Expected exactly one Transformer module in the ColBERT model; "
+                f"found {len(transformer_modules)}."
             )
 
-        if device == "mps" and not torch.backends.mps.is_available():
-            raise RuntimeError(
-                "ColBERT device='mps' was requested, "
-                "but MPS is not available."
+        transformer = transformer_modules[0]
+        transformer.query_length = query_length
+        transformer.document_length = document_length
+
+    @staticmethod
+    def _ensure_tensor(embeddings: object) -> torch.Tensor:
+        """Convert a single model embedding output to a tensor."""
+
+        if isinstance(embeddings, torch.Tensor):
+            return embeddings
+
+        return torch.as_tensor(embeddings)
+
+    @staticmethod
+    def _ensure_document_tensors(
+        embeddings: object,
+    ) -> list[torch.Tensor]:
+        """
+        Normalize real ColBERT document output to a list of tensors.
+
+        MultiVectorEncoder.encode_document() returns one tensor per
+        document because documents can have different token counts.
+        """
+
+        if isinstance(embeddings, torch.Tensor):
+            if embeddings.ndim == 2:
+                return [embeddings]
+
+            if embeddings.ndim == 3:
+                return [
+                    embedding
+                    for embedding in embeddings
+                ]
+
+            raise ValueError(
+                "Unexpected document embedding tensor shape: "
+                f"{tuple(embeddings.shape)}."
             )
 
-        return torch.device(device)
+        if not isinstance(embeddings, (list, tuple)):
+            raise TypeError(
+                "Unexpected document embedding output type: "
+                f"{type(embeddings).__name__}."
+            )
 
-    # ------------------------------------------------------------------
-    # Query encoding
-    # ------------------------------------------------------------------
+        document_embeddings: list[torch.Tensor] = []
+
+        for embedding in embeddings:
+            tensor = (
+                embedding
+                if isinstance(embedding, torch.Tensor)
+                else torch.as_tensor(embedding)
+            )
+
+            if tensor.ndim != 2:
+                raise ValueError(
+                    "Each document embedding must have shape "
+                    "[tokens, embedding_dim]; "
+                    f"found {tuple(tensor.shape)}."
+                )
+
+            document_embeddings.append(tensor)
+
+        return document_embeddings
 
     def encode_query(
         self,
         query: str,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """
-        Encode one query using the checkpoint's query-side recipe.
+        Encode a single query.
 
-        Returns
-        -------
-        tuple[Tensor, Tensor]
-            Token embeddings and an all-valid scoring mask.
-
-        MultiVectorEncoder already applies the model's scoring mask
-        and returns only tokens that participate in late interaction.
+        Returns:
+            A tuple containing token embeddings and a boolean attention mask.
         """
 
         if not query or not query.strip():
             raise ValueError("query must not be empty.")
 
-        embeddings = self.model.encode_query(
-            query,
-            batch_size=1,
-            show_progress_bar=False,
-            convert_to_numpy=False,
-        )
+        with torch.inference_mode():
+            embeddings = self.model.encode_query(
+                query,
+                batch_size=1,
+                show_progress_bar=False,
+                convert_to_numpy=False,
+            )
 
-        if isinstance(embeddings, list):
-            if len(embeddings) != 1:
-                raise RuntimeError(
-                    "Expected exactly one query embedding."
+        embeddings = self._ensure_tensor(embeddings)
+
+        if embeddings.ndim == 3:
+            if embeddings.shape[0] != 1:
+                raise ValueError(
+                    "Expected a single query embedding or a batch "
+                    "containing exactly one query."
                 )
 
-            token_embeddings = embeddings[0]
-        else:
-            token_embeddings = embeddings
+            embeddings = embeddings[0]
 
-        token_embeddings = token_embeddings.detach().cpu()
+        if embeddings.ndim != 2:
+            raise ValueError(
+                "Expected query embeddings with shape "
+                "[tokens, embedding_dim]; "
+                f"found {tuple(embeddings.shape)}."
+            )
 
-        mask = torch.ones(
-            token_embeddings.shape[0],
+        attention_mask = torch.ones(
+            embeddings.shape[0],
             dtype=torch.bool,
+            device=embeddings.device,
         )
 
-        return token_embeddings, mask
-
-    # ------------------------------------------------------------------
-    # Document encoding
-    # ------------------------------------------------------------------
+        return embeddings, attention_mask
 
     def encode_documents(
         self,
         documents: Sequence[str],
     ) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
         """
-        Encode documents using the checkpoint's document-side recipe.
+        Encode a batch of documents.
 
-        The underlying model applies its document length and scoring
-        mask. Outputs are variable-length token matrices.
+        Returns:
+            A list of token-embedding tensors and a corresponding list
+            of boolean attention masks.
         """
 
         if not documents:
-            return [], []
+            raise ValueError("documents must not be empty.")
 
-        embeddings = self.model.encode_document(
-            list(documents),
-            batch_size=self.config.batch_size,
-            show_progress_bar=False,
-            convert_to_numpy=False,
-        )
-
-        if not isinstance(embeddings, list):
-            embeddings = [embeddings]
-
-        token_embeddings: list[torch.Tensor] = []
-        masks: list[torch.Tensor] = []
-
-        for embedding in embeddings:
-            tensor = embedding.detach().cpu()
-
-            token_embeddings.append(tensor)
-
-            masks.append(
-                torch.ones(
-                    tensor.shape[0],
-                    dtype=torch.bool,
-                )
+        if any(
+            not document or not document.strip()
+            for document in documents
+        ):
+            raise ValueError(
+                "documents must not contain empty text."
             )
 
-        return token_embeddings, masks
+        with torch.inference_mode():
+            embeddings = self.model.encode_document(
+                list(documents),
+                batch_size=self.config.batch_size,
+                show_progress_bar=False,
+                convert_to_numpy=False,
+            )
 
-    # ------------------------------------------------------------------
-    # Late interaction scoring
-    # ------------------------------------------------------------------
+        document_embeddings = self._ensure_document_tensors(
+            embeddings
+        )
+
+        if len(document_embeddings) != len(documents):
+            raise RuntimeError(
+                "ColBERT returned a different number of document "
+                "embeddings than input documents: "
+                f"expected {len(documents)}, "
+                f"found {len(document_embeddings)}."
+            )
+
+        attention_masks = [
+            torch.ones(
+                embedding.shape[0],
+                dtype=torch.bool,
+                device=embedding.device,
+            )
+            for embedding in document_embeddings
+        ]
+
+        return document_embeddings, attention_masks
 
     @staticmethod
     def maxsim_score(
@@ -170,59 +271,70 @@ class ColBERTEncoder:
         query_mask: torch.Tensor,
         document_embeddings: torch.Tensor,
         document_mask: torch.Tensor,
-    ) -> float:
+    ) -> torch.Tensor:
         """
         Compute ColBERT MaxSim.
 
-        For every valid query token, the maximum cosine similarity
-        against document tokens is selected and the resulting values
-        are summed across query tokens.
+        Args:
+            query_embeddings:
+                Query token embeddings with shape
+                [query_tokens, embedding_dim] or
+                [batch, query_tokens, embedding_dim].
+
+            query_mask:
+                Boolean query-token mask.
+
+            document_embeddings:
+                Document token embeddings with shape
+                [document_tokens, embedding_dim] or
+                [batch, document_tokens, embedding_dim].
+
+            document_mask:
+                Boolean document-token mask.
+
+        Returns:
+            MaxSim score for each query/document pair.
         """
 
-        query_tokens = query_embeddings[
-            query_mask.bool()
-        ]
+        if query_embeddings.ndim == 2:
+            query_embeddings = query_embeddings.unsqueeze(0)
 
-        document_tokens = document_embeddings[
-            document_mask.bool()
-        ]
+        if document_embeddings.ndim == 2:
+            document_embeddings = document_embeddings.unsqueeze(0)
 
-        if query_tokens.numel() == 0:
-            return 0.0
+        if query_mask.ndim == 1:
+            query_mask = query_mask.unsqueeze(0)
 
-        if document_tokens.numel() == 0:
-            return 0.0
+        if document_mask.ndim == 1:
+            document_mask = document_mask.unsqueeze(0)
 
         similarity = torch.matmul(
-            query_tokens,
-            document_tokens.T,
+            query_embeddings,
+            document_embeddings.transpose(-1, -2),
         )
 
-        max_per_query = similarity.max(
-            dim=1
-        ).values
+        document_mask_expanded = document_mask.unsqueeze(1)
 
-        return float(
-            max_per_query.sum().item()
+        similarity = similarity.masked_fill(
+            ~document_mask_expanded,
+            torch.finfo(similarity.dtype).min,
         )
 
-    # ------------------------------------------------------------------
-    # Metadata
-    # ------------------------------------------------------------------
+        max_similarity = similarity.max(dim=-1).values
+
+        query_mask_float = query_mask.to(
+            dtype=max_similarity.dtype
+        )
+
+        scores = (
+            max_similarity * query_mask_float
+        ).sum(dim=-1)
+
+        return scores
 
     @property
     def embedding_dimension(self) -> int:
-        """Return the final ColBERT token embedding dimension."""
-
-        # MultiVectorEncoder exposes the ColBERT projection as the
-        # Dense module following the Transformer.
-        #
-        # For colbert-ir/colbertv2.0:
-        #   Transformer: 768
-        #   Dense:       768 -> 128
-        #   Normalize
-        #
-        # Therefore the final token representation is 128-D.
+        """Return the dimensionality of ColBERT token embeddings."""
 
         for module in self.model:
             out_features = getattr(
@@ -235,5 +347,6 @@ class ColBERTEncoder:
                 return int(out_features)
 
         raise RuntimeError(
-            "Unable to determine final ColBERT embedding dimension."
+            "Unable to determine ColBERT embedding dimension "
+            "from model modules."
         )

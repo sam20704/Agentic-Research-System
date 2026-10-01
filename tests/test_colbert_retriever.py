@@ -243,6 +243,13 @@ def test_empty_query_raises_value_error():
         retriever.retrieve("")
 
 
+def test_whitespace_query_raises_value_error():
+    retriever = make_retriever()
+
+    with pytest.raises(ValueError):
+        retriever.retrieve("   ")
+
+
 def test_non_positive_top_k_raises_value_error():
     retriever = make_retriever()
 
@@ -268,6 +275,9 @@ def test_provenance_is_preserved():
 
     assert result.chunk.chunk_id == "chunk1"
     assert result.chunk.document_id == "doc1"
+    assert result.chunk.text == (
+        "India semiconductor policy incentives."
+    )
     assert result.chunk.page_numbers == (1,)
     assert result.chunk.source == "policy.pdf"
     assert result.chunk.section == "Policy"
@@ -292,6 +302,17 @@ def test_provenance_is_preserved():
     ] == ["colbert"]
 
     assert "colbert_score" in result.chunk.metadata
+
+
+def test_retrieval_result_contains_rank_and_score():
+    retriever = make_retriever()
+
+    results = retriever.retrieve(
+        "semiconductor"
+    )
+
+    assert results[0].rank == 1
+    assert isinstance(results[0].score, float)
 
 
 def test_deterministic_ranking():
