@@ -1,0 +1,27 @@
+[
+  {
+    "case_id": "exact_structural_regional_trends",
+    "category": "exact_structural",
+    "query": "Regional trends",
+    "expected_titles": [
+      "2. Regional trends"
+    ]
+  },
+  {
+    "case_id": "semantic_structural_ev_adoption_regions",
+    "category": "semantic_structural",
+    "query": "How is EV adoption changing across regions?",
+    "expected_titles": [
+      "2. Regional trends"
+    ]
+  },
+  {
+    "case_id": "multihop_regional_supply_chain",
+    "category": "multihop_complex",
+    "query": "Compare regional EV adoption trends with the major supply-chain constraints discussed later in the report.",
+    "expected_titles": [
+      "2. Regional trends",
+      "2.5 Supply chain constraints"
+    ]
+  }
+]

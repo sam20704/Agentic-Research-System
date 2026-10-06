@@ -1,0 +1,171 @@
+{
+  "evaluation": {
+    "name": "phase3_2_pageindex_navigation",
+    "navigator": "PageIndexNavigator",
+    "index_path": "C:\\Users\\sripa\\OneDrive\\Desktop\\agentic_project\\agentic-research-system\\.pageindex\\Global_Supply_Chain_Report_DEC2025_EV_1.json",
+    "cases_path": "C:\\Users\\sripa\\OneDrive\\Desktop\\agentic_project\\agentic-research-system\\data\\benchmarks\\pageindex_navigation_cases.json",
+    "top_k": 5,
+    "toc_source": "bookmarks"
+  },
+  "overall": {
+    "cases": 3,
+    "recall_at_k": 0.5,
+    "mrr": 0.6666666666666666,
+    "mean_latency_ms": 1.4578999932079266
+  },
+  "by_category": {
+    "exact_structural": {
+      "cases": 1,
+      "recall_at_k": 1.0,
+      "mrr": 1.0,
+      "mean_latency_ms": 0.9281999955419451
+    },
+    "multihop_complex": {
+      "cases": 1,
+      "recall_at_k": 0.5,
+      "mrr": 1.0,
+      "mean_latency_ms": 1.4919999957783148
+    },
+    "semantic_structural": {
+      "cases": 1,
+      "recall_at_k": 0.0,
+      "mrr": 0.0,
+      "mean_latency_ms": 1.9534999883035198
+    }
+  },
+  "results": [
+    {
+      "case_id": "exact_structural_regional_trends",
+      "category": "exact_structural",
+      "query": "Regional trends",
+      "expected_titles": [
+        "2. Regional trends"
+      ],
+      "top_k": 5,
+      "latency_ms": 0.9281999955419451,
+      "retrieved_titles": [
+        "2. Regional trends"
+      ],
+      "retrieved_node_ids": [
+        "0008"
+      ],
+      "retrieved_paths": [
+        [
+          "II. An Overview of the EV Consumer Market",
+          "2. Regional trends"
+        ]
+      ],
+      "matched_expected_titles": [
+        "2. Regional trends"
+      ],
+      "recall_at_k": 1.0,
+      "first_relevant_rank": 1,
+      "mrr": 1.0
+    },
+    {
+      "case_id": "semantic_structural_ev_adoption_regions",
+      "category": "semantic_structural",
+      "query": "How is EV adoption changing across regions?",
+      "expected_titles": [
+        "2. Regional trends"
+      ],
+      "top_k": 5,
+      "latency_ms": 1.9534999883035198,
+      "retrieved_titles": [
+        "1. Global adoption",
+        "III. Breaking Down the EV Value Chain",
+        "II. An Overview of the EV Consumer Market",
+        "4.1 Global EV assembly footprint and localization strategies",
+        "III. Breaking Down the EV Value Chain"
+      ],
+      "retrieved_node_ids": [
+        "0006",
+        "0014",
+        "0007",
+        "0034",
+        "0012"
+      ],
+      "retrieved_paths": [
+        [
+          "II. An Overview of the EV Consumer Market",
+          "1. Global adoption"
+        ],
+        [
+          "III. Breaking Down the EV Value Chain",
+          "1. Raw materials for EVs",
+          "III. Breaking Down the EV Value Chain"
+        ],
+        [
+          "II. An Overview of the EV Consumer Market",
+          "1. Global adoption",
+          "II. An Overview of the EV Consumer Market"
+        ],
+        [
+          "III. Breaking Down the EV Value Chain",
+          "4. Vehicle assembly and logistics",
+          "4.1 Global EV assembly footprint and localization strategies"
+        ],
+        [
+          "III. Breaking Down the EV Value Chain"
+        ]
+      ],
+      "matched_expected_titles": [],
+      "recall_at_k": 0.0,
+      "first_relevant_rank": null,
+      "mrr": 0.0
+    },
+    {
+      "case_id": "multihop_regional_supply_chain",
+      "category": "multihop_complex",
+      "query": "Compare regional EV adoption trends with the major supply-chain constraints discussed later in the report.",
+      "expected_titles": [
+        "2. Regional trends",
+        "2.5 Supply chain constraints"
+      ],
+      "top_k": 5,
+      "latency_ms": 1.4919999957783148,
+      "retrieved_titles": [
+        "2. Regional trends",
+        "III. Breaking Down the EV Value Chain",
+        "III. Breaking Down the EV Value Chain",
+        "II. An Overview of the EV Consumer Market",
+        "II. An Overview of the EV Consumer Market"
+      ],
+      "retrieved_node_ids": [
+        "0008",
+        "0014",
+        "0012",
+        "0007",
+        "0005"
+      ],
+      "retrieved_paths": [
+        [
+          "II. An Overview of the EV Consumer Market",
+          "2. Regional trends"
+        ],
+        [
+          "III. Breaking Down the EV Value Chain",
+          "1. Raw materials for EVs",
+          "III. Breaking Down the EV Value Chain"
+        ],
+        [
+          "III. Breaking Down the EV Value Chain"
+        ],
+        [
+          "II. An Overview of the EV Consumer Market",
+          "1. Global adoption",
+          "II. An Overview of the EV Consumer Market"
+        ],
+        [
+          "II. An Overview of the EV Consumer Market"
+        ]
+      ],
+      "matched_expected_titles": [
+        "2. Regional trends"
+      ],
+      "recall_at_k": 0.5,
+      "first_relevant_rank": 1,
+      "mrr": 1.0
+    }
+  ]
+}
