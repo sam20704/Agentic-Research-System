@@ -54,6 +54,14 @@ def test_pageindex_maps_structure_to_existing_retrieval_contract(
             text=document.pages[0].text,
             page_numbers=(1,),
             source=document.source,
+            section="Semiconductor Policy",
+            bounding_boxes=(
+                BoundingBox(0, 0, 10, 10),
+            ),
+            element_ids=("e1",),
+            metadata={
+                "fixture": "provenance",
+            },
         )
     ]
 
@@ -85,13 +93,28 @@ def test_pageindex_maps_structure_to_existing_retrieval_contract(
     assert len(results) == 1
     assert isinstance(results[0], RetrievalResult)
 
+    # Retrieval contract.
     assert results[0].retrieval_method == "pageindex"
     assert results[0].chunk.chunk_id == chunks[0].chunk_id
 
+    # Canonical document/chunk provenance.
+    assert results[0].chunk.document_id == document.document_id
+    assert results[0].chunk.page_numbers == (1,)
+    assert results[0].chunk.source == document.source
+    assert results[0].chunk.section == "Semiconductor Policy"
+    assert results[0].chunk.chunk_id == "chunk-1"
+    assert results[0].chunk.element_ids == ("e1",)
+    assert results[0].chunk.bounding_boxes == (
+        BoundingBox(0, 0, 10, 10),
+    )
+
+    # Existing chunk metadata must be preserved.
+    assert results[0].chunk.metadata["fixture"] == "provenance"
+
+    # PageIndex-specific provenance.
     assert results[0].chunk.metadata["retrieval_sources"] == [
         "pageindex"
     ]
-
     assert results[0].chunk.metadata["pageindex_node_id"] == "0001"
     assert (
         results[0].chunk.metadata["pageindex_title"]
