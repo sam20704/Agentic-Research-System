@@ -107,3 +107,34 @@ def test_invalid_chunking_config():
         raise AssertionError(
             "Expected invalid overlap configuration to fail"
         )
+
+def test_chunking_preserves_explicit_hierarchy_metadata():
+    element = Element(
+        element_id="heading-aware-element",
+        element_type="paragraph",
+        text="Semiconductor supply chain policy and manufacturing details are described here.",
+        bbox=BoundingBox(x0=1, y0=2, x1=300, y1=80),
+        metadata={
+            "hierarchical_section_path": "Industry > Semiconductors",
+            "hierarchical_section_id": "heading-17",
+        },
+    )
+    page = Page(
+        page_number=7,
+        text=element.text,
+        elements=[element],
+        metadata={"section_path": "Fallback Page Section"},
+    )
+    document = Document(
+        document_id="doc-structure",
+        source="structure.pdf",
+        source_path="structure.pdf",
+        file_hash="hash",
+        pages=[page],
+        metadata={"parser": "test"},
+    )
+    chunks = chunk_document(document, ChunkingConfig(min_chunk_chars=10))
+    assert len(chunks) == 1
+    assert chunks[0].metadata["hierarchical_section_path"] == "Industry > Semiconductors"
+    assert chunks[0].metadata["hierarchical_section_id"] == "heading-17"
+    assert chunks[0].metadata["section_path"] == "Fallback Page Section"
