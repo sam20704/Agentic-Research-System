@@ -3,6 +3,8 @@
 
 import json
 
+import pytest
+
 from src.evaluation.run_hierarchical_benchmark import (
     benchmark,
     ground_truth_ids,
@@ -250,6 +252,7 @@ def test_benchmark_writes_expected_result_structure(tmp_path):
     assert metrics["average_page_nodes_scored"] >= 0.0
     assert metrics["average_chunk_nodes_scored"] >= 0.0
     assert 0.0 <= metrics["average_chunk_candidate_reduction_ratio"] <= 1.0
+    assert 0.0 <= metrics["average_chunk_scoring_reduction_ratio"] <= 1.0
     assert result["runtime"]["model"] == "deterministic / none"
     assert result["runtime"]["device"] == "CPU"
     assert result["index"]["nodes"] > 0
@@ -266,7 +269,7 @@ def test_benchmark_writes_expected_result_structure(tmp_path):
 
     assert (
         result["baseline_comparison"]["status"]
-        == "not_run"
+        == "not_available"
     )
 
 def test_load_chunks_reconstructs_canonical_bounding_boxes(tmp_path):
@@ -305,3 +308,95 @@ def test_benchmark_rejects_ground_truth_ids_not_in_corpus(tmp_path):
     import pytest
     with pytest.raises(ValueError, match="unknown chunk IDs"):
         benchmark(corpus_path, ground_truth_path, output_path, top_k=1)
+
+
+def test_benchmark_compares_only_matching_frozen_baseline(tmp_path):
+    from src.evaluation.run_hierarchical_benchmark import _baseline_comparison
+
+    baseline_path = tmp_path / "baseline.json"
+    baseline_path.write_text(
+        json.dumps(
+            {
+                "corpus_size": 3,
+                "query_count": 2,
+                "ground_truth_pairs": 2,
+                "methods": {
+                    "bge-m3": {
+                        "recall_at_5": 0.5,
+                        "recall_at_10": 0.75,
+                        "mrr": 0.6,
+                        "mean_latency_ms": 10.0,
+                        "median_latency_ms": 9.0,
+                        "peak_memory_mb": 12.0,
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    comparison = _baseline_comparison(
+        baseline_path,
+        corpus_chunks=3,
+        query_count=2,
+        ground_truth_pairs=2,
+        hierarchical_metrics={
+            "recall_at_5": 0.25,
+            "recall_at_10": 0.5,
+            "mrr": 0.4,
+        },
+    )
+
+    assert comparison["status"] == "matched_dataset_historical_comparison"
+    assert comparison["methods"]["bge-m3"]["quality_delta_vs_hierarchical"] == pytest.approx({
+        "recall_at_5": -0.25,
+        "recall_at_10": -0.25,
+        "mrr": -0.2,
+    })
+    assert "not use them as a head-to-head" in comparison["latency_memory_note"]
+
+
+def test_benchmark_rejects_baseline_with_different_dataset_counts(tmp_path):
+    from src.evaluation.run_hierarchical_benchmark import _baseline_comparison
+
+    baseline_path = tmp_path / "baseline.json"
+    baseline_path.write_text(
+        json.dumps(
+            {
+                "corpus_size": 99,
+                "query_count": 2,
+                "ground_truth_pairs": 2,
+                "methods": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    comparison = _baseline_comparison(
+        baseline_path,
+        corpus_chunks=3,
+        query_count=2,
+        ground_truth_pairs=2,
+        hierarchical_metrics={
+            "recall_at_5": 0.25,
+            "recall_at_10": 0.5,
+            "mrr": 0.4,
+        },
+    )
+
+    assert comparison["status"] == "incompatible"
+
+
+def test_default_benchmark_paths_are_repository_anchored():
+    from src.evaluation.run_hierarchical_benchmark import (
+        DEFAULT_BASELINE_SUMMARY,
+        DEFAULT_CORPUS,
+        DEFAULT_GROUND_TRUTH,
+        DEFAULT_OUTPUT,
+        PROJECT_ROOT,
+    )
+
+    assert DEFAULT_CORPUS == PROJECT_ROOT / "data" / "benchmarks" / "retrieval_corpus.json"
+    assert DEFAULT_GROUND_TRUTH == PROJECT_ROOT / "data" / "benchmarks" / "retrieval_ground_truth.json"
+    assert DEFAULT_OUTPUT == PROJECT_ROOT / "data" / "benchmarks" / "phase3_3_hierarchical_results.json"
+    assert DEFAULT_BASELINE_SUMMARY == PROJECT_ROOT / "data" / "benchmarks" / "results" / "phase3_1_retrieval_summary.json"

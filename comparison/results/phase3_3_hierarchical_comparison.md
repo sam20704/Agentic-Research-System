@@ -2,22 +2,22 @@
 
 ## Status
 
-**NOT READY TO MERGE.** This document records validation status, not a claim that the full phase has passed acceptance.
+**NOT READY TO MERGE.** The benchmark is now runnable from the supplied repository snapshot and compares against the frozen Phase 3.1 summary when the corpus, query, and relevance-label counts match. The measured retrieval quality is lower than both historical Phase 3.1 baselines, so this implementation should not be presented as a quality improvement.
 
 ## Intended architecture
 
 ```text
 Query
   ↓
-Rank compact section summaries
+Score compact section/subsection summaries
   ↓
 Keep top_sections
   ↓
-Rank pages only inside selected sections/subsections
+Score pages only within selected sections/subsections
   ↓
 Keep top_pages_per_section
   ↓
-Rank chunks only inside selected pages
+Score chunks only within selected pages
   ↓
 Deduplicate by canonical chunk_id
   ↓
@@ -26,6 +26,8 @@ Deterministic final ranking
 Canonical RetrievalResult[]
 ```
 
+Section selection necessarily scores each compact section/subsection summary. Progressive narrowing is demonstrated by the page and chunk stages: they score candidates only after parent selections. The benchmark now reports both retained candidate counts and actual nodes scored at each level; these values must not be conflated.
+
 ## Structural representation
 
 - Canonical `DocumentChunk` objects remain the source of truth for text and provenance.
@@ -33,35 +35,54 @@ Canonical RetrievalResult[]
 - Page-to-chunk membership is represented separately through page child references. A chunk spanning multiple pages therefore has multiple page memberships but no conflicting single parent.
 - `section_path` / `hierarchical_section_path` paths are represented as a section node and nested subsection nodes.
 - Missing headings use an `Unsectioned` section node.
-- Repeated identical headings can be distinguished only when the ingestion metadata supplies a stable structural identifier (`hierarchical_section_id`, `section_id`, `section_instance_id`, or `heading_id`). If such metadata is absent, the system does not invent a distinct structural identity from the title alone; this remains an ingestion limitation to resolve if the source data contains repeated-heading occurrences without identifiers.
+- Repeated identical headings can be distinguished only when ingestion metadata supplies a stable structural identifier (`hierarchical_section_id`, `section_id`, `section_instance_id`, or `heading_id`). Without such metadata, identical paths may be grouped together. The implementation cannot safely infer whether identical titles on different pages are one multi-page section or separate heading instances; this remains an ingestion limitation.
 - Original chunk provenance and metadata are preserved; hierarchy-specific node IDs use separate metadata keys.
 
-## Benchmark inputs and status
+## Reproducible benchmark run
 
-The supplied Phase 3.3 ZIP does not contain `data/benchmarks/retrieval_corpus.json` or `data/benchmarks/retrieval_ground_truth.json`, which are the default inputs to `src/evaluation/run_hierarchical_benchmark.py`. Consequently, the real-corpus benchmark and same-query baseline comparison cannot be declared reproducible from this snapshot alone.
+Command, from the repository root:
 
-The existing `data/benchmarks/phase3_3_hierarchical_results.json` is historical output and must not be represented as a fresh run. Recover and verify the frozen corpus and ground truth before publishing new metrics. Do not edit frozen relevance labels to improve scores.
+```bash
+python -m src.evaluation.run_hierarchical_benchmark --output /tmp/phase3_3_hierarchical_results.json
+```
 
-## Metrics to publish after a reproducible run
+Inputs present in the supplied snapshot:
 
-| Metric | Existing baseline | Hierarchical |
-|---|---:|---:|
-| Recall@5 | Not yet verified | Not yet rerun |
-| Recall@10 | Not yet verified | Not yet rerun |
-| MRR | Not yet verified | Not yet rerun |
-| Mean / median latency | Not yet verified | Not yet rerun |
-| Index construction time | Not yet verified | Not yet rerun |
-| Memory measurement | Not yet verified | Python allocation metric available; process RSS still needed for a system-memory comparison |
-| Section/page/chunk candidates | Not applicable or not instrumented in existing baseline | Instrumented by the hierarchical retriever |
+- `data/benchmarks/retrieval_corpus.json` — 1,773 chunks
+- `data/benchmarks/retrieval_ground_truth.json` — 20 queries, 186 relevance pairs
+- `data/benchmarks/results/phase3_1_retrieval_summary.json` — historical Phase 3.1 summary, 1,773 chunks and the same 20 queries / 186 relevance pairs
+
+One run in the review environment produced the following results. Timing and memory values are environment-dependent and should be rerun in the project's intended environment before publication.
+
+| Metric | Hierarchical (this run) | Phase 3.1 BGE-M3 (historical) | Phase 3.1 ColBERT (historical) |
+|---|---:|---:|---:|
+| Recall@5 | 0.2063 | 0.3137 | 0.3189 |
+| Recall@10 | 0.2814 | 0.5920 | 0.4904 |
+| MRR | 0.6389 | 0.7500 | 0.8875 |
+| Mean latency (ms) | 60.56 | 84.28 | 223.08 |
+| Median latency (ms) | 57.13 | 82.19 | 145.87 |
+| Index construction (ms) | 782.65 | Not available in summary | Not available in summary |
+| Peak Python allocation (MiB) | 3.02 | Not the same memory metric | Not the same memory metric |
+| Average section summaries scored | 8.00 | Not applicable / not recorded | Not applicable / not recorded |
+| Average pages scored after section selection | 224.55 | Not recorded | Not recorded |
+| Average chunks scored after page selection | 88.40 | Not recorded | Not recorded |
+| Average chunk scoring reduction | 95.01% | Not recorded | Not recorded |
+
+The Phase 3.1 quality values come from the committed historical summary, not a simultaneous rerun. The benchmark records this as a historical comparison and explicitly warns against treating historical latency or memory as a controlled head-to-head result. Hierarchical Recall@5, Recall@10, and MRR are below both recorded baselines in this run; this is a limitation, not a result to hide or explain away.
+
+## Validation performed during this review
+
+- `python -m pytest tests/test_hierarchical*.py tests/test_pageindex_navigation_evaluation.py -q` — **51 passed** after the benchmark-comparison changes.
+- `python -m src.evaluation.run_hierarchical_benchmark --output /tmp/phase3_3_hierarchical_results.json` — completed and matched the historical Phase 3.1 dataset counts.
+- `python -m pytest -q` — could not complete collection in the review container because project dependencies were not installed (`rank_bm25`, `sentence_transformers`, `transformers`, `qdrant_client`, and `ollama`). The review also found that `rank-bm25` was imported by the existing sparse retriever but was not declared in `requirements.txt`; it has now been added. Rerun the full suite after installing the declared requirements in the project's configured virtual environment.
+- The supplied snapshot contains `.pageindex/Global_Supply_Chain_Report_DEC2025_EV_1.json`, and PageIndex evaluation paths are anchored to the repository root. The targeted PageIndex navigation evaluation tests passed in this environment.
 
 ## Remaining merge gates
 
-1. Run Phase 3.3 unit/integration/benchmark tests in the intended project environment.
-2. Run the complete regression suite and resolve collection/environment errors without broad skips.
-3. Recover the exact frozen corpus and ground-truth inputs and verify their provenance.
-4. Run the baseline and hierarchical method against identical queries and labels.
-5. Include a real representative document integration test that is repository-relative and does not require a model download.
-6. Record exact commands, outputs, environment/device, corpus identity, and benchmark methodology.
-7. Review `git diff --check`, the final staged diff, and repository hygiene before opening a PR.
+1. Run the full suite in the configured project environment and resolve any failures without broad skips.
+2. Decide how ingestion will provide stable identifiers for repeated headings when the source does not already include them; do not infer separate sections from titles alone.
+3. Review the lower retrieval-quality metrics and decide whether the method meets the Phase 3.3 acceptance criteria. Do not modify frozen ground truth to improve results.
+4. If publishing performance comparisons, rerun the baseline and hierarchical method under the same controlled environment and record exact commands, corpus identity, device, and methodology.
+5. Run `git diff --check`, inspect the staged diff, and confirm no generated local artifacts were added.
 
 Phase 4 routing/orchestration, PageIndex refactoring, ColBERT refactoring, and changes to frozen ground truth are outside this phase.

@@ -18,10 +18,12 @@ from src.retrieval.hierarchical import (
 from src.retrieval.models import DocumentChunk
 
 
-DEFAULT_CORPUS = Path("data/benchmarks/retrieval_corpus.json")
-DEFAULT_GROUND_TRUTH = Path("data/benchmarks/retrieval_ground_truth.json")
-DEFAULT_OUTPUT = Path(
-    "data/benchmarks/phase3_3_hierarchical_results.json"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_CORPUS = PROJECT_ROOT / "data" / "benchmarks" / "retrieval_corpus.json"
+DEFAULT_GROUND_TRUTH = PROJECT_ROOT / "data" / "benchmarks" / "retrieval_ground_truth.json"
+DEFAULT_OUTPUT = PROJECT_ROOT / "data" / "benchmarks" / "phase3_3_hierarchical_results.json"
+DEFAULT_BASELINE_SUMMARY = (
+    PROJECT_ROOT / "data" / "benchmarks" / "results" / "phase3_1_retrieval_summary.json"
 )
 
 
@@ -165,11 +167,81 @@ def reciprocal_rank(
     return 0.0
 
 
+def _baseline_comparison(
+    baseline_summary_path: Path | None,
+    corpus_chunks: int,
+    query_count: int,
+    ground_truth_pairs: int,
+    hierarchical_metrics: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Compare against a frozen Phase 3.1 summary only when its dataset matches.
+
+    The Phase 3.1 summary is historical. Quality metrics are comparable when
+    corpus/query/label counts match, but its latency and memory measurements
+    are not treated as a controlled head-to-head performance measurement.
+    """
+    if baseline_summary_path is None or not baseline_summary_path.is_file():
+        return {
+            "status": "not_available",
+            "reason": "No Phase 3.1 baseline summary was supplied or found.",
+        }
+
+    baseline = load_json(baseline_summary_path)
+    expected = {
+        "corpus_size": corpus_chunks,
+        "query_count": query_count,
+        "ground_truth_pairs": ground_truth_pairs,
+    }
+    actual = {
+        "corpus_size": baseline.get("corpus_size"),
+        "query_count": baseline.get("query_count"),
+        "ground_truth_pairs": baseline.get("ground_truth_pairs"),
+    }
+    if actual != expected:
+        return {
+            "status": "incompatible",
+            "path": str(baseline_summary_path),
+            "expected_dataset": expected,
+            "baseline_dataset": actual,
+            "reason": "Baseline corpus/query/label counts do not match this run.",
+        }
+
+    methods: Dict[str, Any] = {}
+    for method_name, baseline_metrics in baseline.get("methods", {}).items():
+        if not isinstance(baseline_metrics, dict):
+            continue
+        methods[method_name] = {
+            "recall_at_5": baseline_metrics.get("recall_at_5"),
+            "recall_at_10": baseline_metrics.get("recall_at_10"),
+            "mrr": baseline_metrics.get("mrr"),
+            "historical_mean_latency_ms": baseline_metrics.get("mean_latency_ms"),
+            "historical_median_latency_ms": baseline_metrics.get("median_latency_ms"),
+            "historical_peak_memory_mb": baseline_metrics.get("peak_memory_mb"),
+            "quality_delta_vs_hierarchical": {
+                "recall_at_5": hierarchical_metrics["recall_at_5"] - baseline_metrics["recall_at_5"],
+                "recall_at_10": hierarchical_metrics["recall_at_10"] - baseline_metrics["recall_at_10"],
+                "mrr": hierarchical_metrics["mrr"] - baseline_metrics["mrr"],
+            },
+        }
+
+    return {
+        "status": "matched_dataset_historical_comparison",
+        "path": str(baseline_summary_path),
+        "dataset": expected,
+        "methods": methods,
+        "latency_memory_note": (
+            "Baseline timing and memory values are historical and were not measured "
+            "in the same controlled run; do not use them as a head-to-head performance claim."
+        ),
+    }
+
+
 def benchmark(
     corpus_path: Path,
     ground_truth_path: Path,
     output_path: Path,
     top_k: int,
+    baseline_summary_path: Path | None = None,
 ) -> Dict[str, Any]:
     """Run the hierarchical retrieval benchmark."""
     if top_k <= 0:
@@ -181,10 +253,12 @@ def benchmark(
     if not chunks:
         raise ValueError(f"Corpus file contains no chunks: {corpus_path}")
     corpus_ids = {chunk.chunk_id for chunk in chunks}
+    ground_truth_pair_count = 0
     for index, item in enumerate(queries):
         relevant = ground_truth_ids(item)
         if not relevant:
             raise ValueError(f"Ground-truth query at index {index} has no relevant chunk IDs")
+        ground_truth_pair_count += len(relevant)
         unknown = relevant - corpus_ids
         if unknown:
             raise ValueError(f"Ground-truth query at index {index} references unknown chunk IDs: {sorted(unknown)}")
@@ -401,16 +475,23 @@ def benchmark(
                 1.0 - statistics.mean(chunk_counts) / len(chunks)
                 if chunk_counts and chunks else 0.0
             ),
-        },
-        "per_query": per_query,
-        "baseline_comparison": {
-            "status": "not_run",
-            "reason": (
-                "A frozen Phase 2 result artifact using "
-                "the same 20-query benchmark was not "
-                "available in the supplied project files."
+            "average_chunk_scoring_reduction_ratio": (
+                1.0 - statistics.mean(chunk_scored_counts) / len(chunks)
+                if chunk_scored_counts and chunks else 0.0
             ),
         },
+        "per_query": per_query,
+        "baseline_comparison": _baseline_comparison(
+            baseline_summary_path=baseline_summary_path,
+            corpus_chunks=len(chunks),
+            query_count=len(queries),
+            ground_truth_pairs=ground_truth_pair_count,
+            hierarchical_metrics={
+                "recall_at_5": statistics.mean(recall5) if recall5 else 0.0,
+                "recall_at_10": statistics.mean(recall10) if recall10 else 0.0,
+                "mrr": statistics.mean(reciprocal_ranks) if reciprocal_ranks else 0.0,
+            },
+        ),
     }
 
     output_path.parent.mkdir(
@@ -459,6 +540,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--baseline-summary",
+        type=Path,
+        default=DEFAULT_BASELINE_SUMMARY,
+        help="Optional frozen Phase 3.1 summary JSON for a dataset-checked comparison.",
+    )
+
+    parser.add_argument(
         "--top-k",
         type=int,
         default=10,
@@ -476,6 +564,7 @@ def main() -> None:
         ground_truth_path=args.ground_truth,
         output_path=args.output,
         top_k=args.top_k,
+        baseline_summary_path=args.baseline_summary,
     )
 
     metrics = result["metrics"]
@@ -518,8 +607,28 @@ def main() -> None:
         f"{metrics['average_page_candidates']:.2f}"
     )
     print(
-        "Average chunk candidates: "
+        "Average chunk candidates retained: "
         f"{metrics['average_chunk_candidates']:.2f}"
+    )
+    print(
+        "Average section nodes scored: "
+        f"{metrics['average_section_nodes_scored']:.2f}"
+    )
+    print(
+        "Average page nodes scored after section selection: "
+        f"{metrics['average_page_nodes_scored']:.2f}"
+    )
+    print(
+        "Average chunk nodes scored after page selection: "
+        f"{metrics['average_chunk_nodes_scored']:.2f}"
+    )
+    print(
+        "Average chunk scoring reduction: "
+        f"{metrics['average_chunk_scoring_reduction_ratio']:.2%}"
+    )
+    print(
+        "Baseline comparison: "
+        f"{result['baseline_comparison']['status']}"
     )
     print(f"Results written to: {args.output}")
 
