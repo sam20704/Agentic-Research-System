@@ -1,0 +1,546 @@
+{
+  "doc_name": "Global_Supply_Chain_Report_DEC2025_EV_1.pdf",
+  "doc_title": "Global Supply GlobalSupply Chain ChainReport",
+  "structure": [
+    {
+      "title": "Preface",
+      "start_index": 1,
+      "end_index": 2,
+      "node_id": "0000"
+    },
+    {
+      "title": "Executive Summary",
+      "node_id": "0001",
+      "start_index": 2,
+      "end_index": 6,
+      "nodes": [
+        {
+          "title": "Expansion and Diversification: Securing EV Supply Chains Amid Global Fragmentation",
+          "node_id": "0002",
+          "start_index": 2,
+          "end_index": 6,
+          "nodes": [
+            {
+              "title": "Executive Summary",
+              "node_id": "0003",
+              "start_index": 2,
+              "end_index": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "I. Introduction",
+      "node_id": "0004",
+      "start_index": 6,
+      "end_index": 8
+    },
+    {
+      "title": "II. An Overview of the EV Consumer Market",
+      "node_id": "0005",
+      "start_index": 8,
+      "end_index": 27,
+      "nodes": [
+        {
+          "title": "1. Global adoption",
+          "node_id": "0006",
+          "start_index": 8,
+          "end_index": 13,
+          "nodes": [
+            {
+              "title": "II. An Overview of the EV Consumer Market",
+              "node_id": "0007",
+              "start_index": 8,
+              "end_index": 13
+            }
+          ]
+        },
+        {
+          "title": "2. Regional trends",
+          "node_id": "0008",
+          "start_index": 13,
+          "end_index": 23
+        },
+        {
+          "title": "3. Leading brands and models",
+          "node_id": "0009",
+          "start_index": 23,
+          "end_index": 25
+        },
+        {
+          "title": "4. Consumer preferences",
+          "node_id": "0010",
+          "start_index": 25,
+          "end_index": 26
+        },
+        {
+          "title": "5. Global market outlook",
+          "node_id": "0011",
+          "start_index": 26,
+          "end_index": 27
+        }
+      ]
+    },
+    {
+      "title": "III. Breaking Down the EV Value Chain",
+      "node_id": "0012",
+      "start_index": 27,
+      "end_index": 71,
+      "nodes": [
+        {
+          "title": "1. Raw materials for EVs",
+          "node_id": "0013",
+          "start_index": 27,
+          "end_index": 48,
+          "nodes": [
+            {
+              "title": "III. Breaking Down the EV Value Chain",
+              "node_id": "0014",
+              "start_index": 27,
+              "end_index": 29
+            },
+            {
+              "title": "1.1 Lithium",
+              "node_id": "0015",
+              "start_index": 29,
+              "end_index": 32
+            },
+            {
+              "title": "1.2 Cobalt",
+              "node_id": "0016",
+              "start_index": 32,
+              "end_index": 35
+            },
+            {
+              "title": "1.3 Nickel",
+              "node_id": "0017",
+              "start_index": 35,
+              "end_index": 38
+            },
+            {
+              "title": "1.4 Rare earth elements",
+              "node_id": "0018",
+              "start_index": 38,
+              "end_index": 41
+            },
+            {
+              "title": "1.5 Graphite",
+              "node_id": "0019",
+              "start_index": 41,
+              "end_index": 43
+            },
+            {
+              "title": "1.6 Manganese",
+              "node_id": "0020",
+              "start_index": 43,
+              "end_index": 44
+            },
+            {
+              "title": "1.7 Copper and aluminium",
+              "node_id": "0021",
+              "start_index": 44,
+              "end_index": 48
+            }
+          ]
+        },
+        {
+          "title": "2. Battery production",
+          "node_id": "0022",
+          "start_index": 48,
+          "end_index": 58,
+          "nodes": [
+            {
+              "title": "2. Battery production (intro)",
+              "start_index": 48,
+              "end_index": 50,
+              "node_id": "0023"
+            },
+            {
+              "title": "2.1 Global battery manufacturing hubs",
+              "node_id": "0024",
+              "start_index": 50,
+              "end_index": 56
+            },
+            {
+              "title": "2.3 Battery pack innovations",
+              "node_id": "0025",
+              "start_index": 56,
+              "end_index": 57
+            },
+            {
+              "title": "2.4 Major battery manufacturers and market share",
+              "node_id": "0026",
+              "start_index": 57,
+              "end_index": 57
+            },
+            {
+              "title": "2.5 Supply chain constraints",
+              "node_id": "0027",
+              "start_index": 57,
+              "end_index": 58
+            }
+          ]
+        },
+        {
+          "title": "3. Electric motors and electronics",
+          "node_id": "0028",
+          "start_index": 58,
+          "end_index": 64,
+          "nodes": [
+            {
+              "title": "3.1 Electric motor technologies",
+              "node_id": "0029",
+              "start_index": 58,
+              "end_index": 60
+            },
+            {
+              "title": "3.2 Power electronics and control systems",
+              "node_id": "0030",
+              "start_index": 60,
+              "end_index": 62
+            },
+            {
+              "title": "3.3 E-axles and integrated power-domain platforms",
+              "node_id": "0031",
+              "start_index": 62,
+              "end_index": 62
+            },
+            {
+              "title": "3.4 Supply chain characteristics and challenges",
+              "node_id": "0032",
+              "start_index": 62,
+              "end_index": 64
+            }
+          ]
+        },
+        {
+          "title": "4. Vehicle assembly and logistics",
+          "node_id": "0033",
+          "start_index": 64,
+          "end_index": 71,
+          "nodes": [
+            {
+              "title": "4.1 Global EV assembly footprint and localization strategies",
+              "node_id": "0034",
+              "start_index": 64,
+              "end_index": 68
+            },
+            {
+              "title": "4.2 Logistics challenges",
+              "node_id": "0035",
+              "start_index": 68,
+              "end_index": 68
+            },
+            {
+              "title": "4.3 Vehicle assembly process and innovations",
+              "node_id": "0036",
+              "start_index": 68,
+              "end_index": 71
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "IV. Technological Innovations Reshaping EV Supply Chains",
+      "node_id": "0037",
+      "start_index": 71,
+      "end_index": 74
+    },
+    {
+      "title": "V. Sustainability and Responsible Sourcing",
+      "node_id": "0038",
+      "start_index": 74,
+      "end_index": 78,
+      "nodes": [
+        {
+          "title": "1. Carbon footprint and clean energy",
+          "node_id": "0039",
+          "start_index": 74,
+          "end_index": 75,
+          "nodes": [
+            {
+              "title": "V. Sustainability and Responsible Sourcing",
+              "node_id": "0040",
+              "start_index": 74,
+              "end_index": 75
+            }
+          ]
+        },
+        {
+          "title": "2. Recycling and circular economy",
+          "node_id": "0041",
+          "start_index": 75,
+          "end_index": 75
+        },
+        {
+          "title": "3. Waste governance",
+          "node_id": "0042",
+          "start_index": 75,
+          "end_index": 76
+        },
+        {
+          "title": "4. Responsible sourcing",
+          "node_id": "0043",
+          "start_index": 76,
+          "end_index": 77
+        },
+        {
+          "title": "5. Green labelling and consumer pressure",
+          "node_id": "0044",
+          "start_index": 77,
+          "end_index": 78
+        }
+      ]
+    },
+    {
+      "title": "VI. China’s EV Industry and its Global Role",
+      "node_id": "0045",
+      "start_index": 78,
+      "end_index": 83,
+      "nodes": [
+        {
+          "title": "VI. China’s EV Industry and its Global Role (intro)",
+          "start_index": 78,
+          "end_index": 79,
+          "node_id": "0046"
+        },
+        {
+          "title": "1. China’s EV supply chain investment goes global",
+          "node_id": "0047",
+          "start_index": 79,
+          "end_index": 80
+        },
+        {
+          "title": "2. Geographic distribution and value chain dynamics",
+          "node_id": "0048",
+          "start_index": 80,
+          "end_index": 81
+        },
+        {
+          "title": "3. Outlook: China’s lead is likely to persist",
+          "node_id": "0049",
+          "start_index": 81,
+          "end_index": 83
+        }
+      ]
+    },
+    {
+      "title": "VII. Forecasts and Scenarios",
+      "node_id": "0050",
+      "start_index": 83,
+      "end_index": 85,
+      "nodes": [
+        {
+          "title": "Scenario 1: Fragmented blocs",
+          "node_id": "0051",
+          "start_index": 83,
+          "end_index": 83
+        },
+        {
+          "title": "Scenario 2: Diversified hybrid",
+          "node_id": "0052",
+          "start_index": 83,
+          "end_index": 84,
+          "nodes": [
+            {
+              "title": "VII. Forecasts and Scenarios",
+              "node_id": "0053",
+              "start_index": 83,
+              "end_index": 83
+            },
+            {
+              "title": "Scenario 1: Fragmented blocs",
+              "node_id": "0054",
+              "start_index": 83,
+              "end_index": 84
+            }
+          ]
+        },
+        {
+          "title": "Scenario 3: ESG-driven localization",
+          "node_id": "0055",
+          "start_index": 84,
+          "end_index": 84
+        },
+        {
+          "title": "Strategic takeaways",
+          "node_id": "0056",
+          "start_index": 84,
+          "end_index": 85,
+          "nodes": [
+            {
+              "title": "Scenario 3: ESG-driven localization",
+              "node_id": "0057",
+              "start_index": 84,
+              "end_index": 85
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "VIII. Conclusion: Business and Policy Implications",
+      "node_id": "0058",
+      "start_index": 85,
+      "end_index": 88,
+      "nodes": [
+        {
+          "title": "For businesses",
+          "node_id": "0059",
+          "start_index": 85,
+          "end_index": 86,
+          "nodes": [
+            {
+              "title": "VIII. Conclusion: Business and Policy Implications",
+              "node_id": "0060",
+              "start_index": 85,
+              "end_index": 86
+            }
+          ]
+        },
+        {
+          "title": "For policymakers",
+          "node_id": "0061",
+          "start_index": 86,
+          "end_index": 87
+        },
+        {
+          "title": "Final outlook",
+          "node_id": "0062",
+          "start_index": 87,
+          "end_index": 88
+        }
+      ]
+    },
+    {
+      "title": "Appendix A. Defining Electric Vehicles: Powertrain and Vehicle-Type Categories",
+      "node_id": "0063",
+      "start_index": 88,
+      "end_index": 90,
+      "nodes": [
+        {
+          "title": "A.1. Categories by powertrain",
+          "node_id": "0064",
+          "start_index": 88,
+          "end_index": 88
+        },
+        {
+          "title": "A.2. Categories by vehicle type",
+          "node_id": "0065",
+          "start_index": 88,
+          "end_index": 88
+        },
+        {
+          "title": "A.3. Reporting practices",
+          "node_id": "0066",
+          "start_index": 88,
+          "end_index": 89,
+          "nodes": [
+            {
+              "title": "Appendix A. Defining Electric Vehicles: Powertrain and Vehicle-Type Categories",
+              "node_id": "0067",
+              "start_index": 88,
+              "end_index": 88
+            },
+            {
+              "title": "A.1. Categories by powertrain",
+              "node_id": "0068",
+              "start_index": 88,
+              "end_index": 89
+            }
+          ]
+        },
+        {
+          "title": "A.4. Scope of this report",
+          "node_id": "0069",
+          "start_index": 89,
+          "end_index": 90,
+          "nodes": [
+            {
+              "title": "Included selectively:",
+              "node_id": "0070",
+              "start_index": 89,
+              "end_index": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Appendix B. Comparison of Major EV Battery Chemistries (2023-2025)",
+      "node_id": "0071",
+      "start_index": 90,
+      "end_index": 91
+    },
+    {
+      "title": "Appendix C. Key Policies Affecting the Electric Vehicle Industry",
+      "node_id": "0072",
+      "start_index": 91,
+      "end_index": 97,
+      "nodes": [
+        {
+          "title": "C.1. China",
+          "node_id": "0073",
+          "start_index": 91,
+          "end_index": 92,
+          "nodes": [
+            {
+              "title": "Appendix C. Key Policies Affecting the Electric Vehicle Industry",
+              "node_id": "0074",
+              "start_index": 91,
+              "end_index": 92
+            }
+          ]
+        },
+        {
+          "title": "C.2. EU",
+          "node_id": "0075",
+          "start_index": 92,
+          "end_index": 93
+        },
+        {
+          "title": "C.3. US",
+          "node_id": "0076",
+          "start_index": 93,
+          "end_index": 93
+        },
+        {
+          "title": "C.4. India",
+          "node_id": "0077",
+          "start_index": 93,
+          "end_index": 94
+        },
+        {
+          "title": "C.5. The UK & Canada",
+          "node_id": "0078",
+          "start_index": 94,
+          "end_index": 94
+        },
+        {
+          "title": "C.6. Asia-Pacific Emerging Markets",
+          "node_id": "0079",
+          "start_index": 94,
+          "end_index": 97,
+          "nodes": [
+            {
+              "title": "C.6. Asia-Pacific Emerging Markets (intro)",
+              "start_index": 94,
+              "end_index": 95,
+              "node_id": "0080"
+            },
+            {
+              "title": "Our Global Supply Chain Analysis by Industry",
+              "node_id": "0081",
+              "start_index": 96,
+              "end_index": 97
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "has_abstract_or_references_section": false,
+  "toc_source": "bookmarks"
+}

@@ -8,5 +8,6 @@ notebooks/.ipynb_checkpoints/
 chroma_db/chroma.sqlite3
 digest.txt
 rm .DS_Store
-.pageindex/
 logs/
+.pageindex/
+data/benchmarks/phase3_3_hierarchical_results.json

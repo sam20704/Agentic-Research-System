@@ -8,3 +8,4 @@ pymupdf
 ollama
 qdrant-client
 rank-bm25
+pageIndex==0.2.22

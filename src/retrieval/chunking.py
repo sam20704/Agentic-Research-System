@@ -114,6 +114,31 @@ def _element_text(element: Element) -> str:
 
     return " ".join(element.text.split())
 
+_HIERARCHY_METADATA_KEYS = (
+    "hierarchical_section_path",
+    "section_path",
+    "hierarchical_section_id",
+    "section_id",
+    "section_instance_id",
+    "heading_id",
+)
+
+
+def _hierarchy_metadata(page, element: Element | None = None) -> dict:
+    """Propagate explicit structural metadata without inferring headings.
+
+    Element-level metadata takes precedence over page-level metadata. The
+    canonical PyMuPDF loader currently does not infer heading structure, so
+    this only preserves hierarchy annotations supplied by an upstream parser.
+    """
+    result = {}
+    for source in (page.metadata or {}, (element.metadata if element else {}) or {}):
+        for key in _HIERARCHY_METADATA_KEYS:
+            value = source.get(key)
+            if isinstance(value, (str, int)) and not isinstance(value, bool) and str(value).strip():
+                result[key] = value
+    return result
+
 
 def chunk_document(
     document: Document,
@@ -173,11 +198,10 @@ def chunk_document(
                             bounding_boxes=(element.bbox,),
                             element_ids=(element.element_id,),
                             metadata={
-                                "parser": document.metadata.get(
-                                    "parser"
-                                ),
+                                "parser": document.metadata.get("parser"),
                                 "chunk_index": chunk_index,
                                 "element_type": element.element_type,
+                                **_hierarchy_metadata(page, element),
                             },
                         )
                     )
@@ -216,6 +240,7 @@ def chunk_document(
                         metadata={
                             "parser": document.metadata.get("parser"),
                             "chunk_index": chunk_index,
+                            **_hierarchy_metadata(page),
                         },
                     )
                 )
